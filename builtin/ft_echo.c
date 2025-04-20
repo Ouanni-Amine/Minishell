@@ -1,0 +1,50 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/18 10:32:13 by aouanni           #+#    #+#             */
+/*   Updated: 2025/04/18 12:47:34 by aouanni          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../builtin.h"
+
+void	ft_echo2(char **cmd, int i, int new_line)
+{
+	while (cmd[i])
+	{
+		ft_putstr_fd(cmd[i], 1);
+		if (cmd[i + 1])
+			ft_putstr_fd(" ", 1);
+		i++;
+	}
+	if (new_line)
+		ft_putstr_fd("\n", 1);
+}
+
+void	ft_echo(char **cmd)
+{
+	int	i;
+	int	j;
+	int	new_line;
+
+	i = 1;
+	new_line = 1;
+	while (cmd[i] && cmd[i][0] == '-' && cmd[i][1])
+	{
+		j = 1;
+		while (cmd[i][j] == 'n')
+			j++;
+		if (cmd[i][j] == '\0')
+		{
+			new_line = 0;
+			i++;
+		}
+		else
+			break ;
+	}
+	ft_echo2(cmd, i, new_line);
+}
