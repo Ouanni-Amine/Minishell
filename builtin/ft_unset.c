@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 16:09:06 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/19 17:40:54 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/20 17:57:01 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,22 +42,28 @@ void	ft_unset2(t_env *current, t_env *prev, char *cmd, t_env **head)
 	}
 }
 
-void	ft_unset(t_env **head, char **cmd)
+int	ft_unset(t_env **head, char **cmd)
 {
 	int		i;
 	t_env	*current;
 	t_env	*prev;
+	int		status;
 
 	i = 1;
+	status = 0;
 	if (!cmd[1])
-		return ;
+		return (0);
 	while (cmd[i])
 	{
 		current = *head;
 		prev = NULL;
 		if (ft_isdigit(cmd[i][0]) || (!ft_isalnum_unscore(cmd[i])))
+		{
 			error("minishell: unset: `", cmd[i], "': not a valid identifier", NULL);
+			status = 1;
+		}
 		ft_unset2(current, prev, cmd[i], head);
 		i++;
 	}
+	return (0);
 }

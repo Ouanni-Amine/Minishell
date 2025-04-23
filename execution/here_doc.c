@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:48:10 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/19 13:48:22 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/22 11:54:27 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,20 @@
 int	fill_tempfile(int input_fd, char *limiter)
 {
 	char	*line;
+	char	*new_line;
 
 	line = NULL;
 	while (1)
 	{
-		ft_putstr_fd("> ", STDOUT_FILENO);
-		line = get_next_line(STDIN_FILENO);
+		line = readline("> ");
 		if (!line)
 			break ;
-		if (!ft_strcmp(line, limiter))
+		new_line = ft_strjoin(line, "\n");
+		if (!ft_strcmp(new_line, limiter))
 			break ;
-		if (write(input_fd, line, ft_strlen(line, '\0')) < 0)
+		if (write(input_fd, new_line, ft_strlen(new_line, '\0')) < 0)
 		{
-			perror("pipex");
+			perror("minishell");
 			return (-1);
 		}
 	}
@@ -35,16 +36,16 @@ int	fill_tempfile(int input_fd, char *limiter)
 	return (1);
 }
 
-int	heredoc_inputfd(char *v)
+int	heredoc_inputfd(char *limiter)
 {
 	int		input_fd;
-	char	*limiter;
-
-	limiter = ft_strjoin(v, "\n");
+	limiter = ft_strjoin(limiter, "\n");
+	unlink("temp.txt");
 	input_fd = open("temp.txt", O_WRONLY | O_CREAT| O_TRUNC, 0644);
 	if (input_fd < 0)
 	{
-		perror("pipex");
+		error("minishell: temp.txt: ", strerror(errno), 0 , 0);
+		perror("minishell: open");
 		return (-1);
 	}
 	if (fill_tempfile(input_fd, limiter) == -1)
@@ -52,7 +53,7 @@ int	heredoc_inputfd(char *v)
 	input_fd = open("temp.txt", O_RDONLY);
 	if (input_fd < 0)
 	{
-		perror("pipex");
+		error("minishell: temp.txt: ", strerror(errno), 0 , 0);
 		return (-1);
 	}
 	unlink("temp.txt");

@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 20:18:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/19 18:22:59 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/21 14:50:49 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	ft_atoi(const char *str, int *value)
 	return (1);
 }
 
-void	ft_exit(char **cmd, int last_cmd_status)
+int	ft_exit(char **cmd, int last_cmd_status)
 {
 	int	fail;
 
@@ -69,7 +69,7 @@ void	ft_exit(char **cmd, int last_cmd_status)
 		if (cmd[2])
 		{
 			error("minishell: exit: too many arguments", NULL, NULL, NULL);
-			return ;
+			return (1);
 		}
 		exit(fail % 256);
 	}

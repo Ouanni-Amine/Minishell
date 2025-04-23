@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 21:02:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/19 17:54:09 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/20 17:21:55 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,45 +53,55 @@ void	ft_export_show(t_env **env)
 	}
 }
 
-void ft_export_concatenate(char *cmd, t_env **env)
+int ft_export_concatenate(char *cmd, t_env **env)
 {
 	char	*key;
 	char	*val;
 	char	*add;
 
-		key = ft_strdup(cmd, '+');
-		if (!key[0] || !is_valide(key))
-			error("export: `", cmd, "': not a valid identifier", NULL);
-		else
-		{
-			val = ft_strdup(ft_strchr(cmd, '=') + 1, '\0');
-			add = get_env_value(*env, key);
-			if (add)
-				val = ft_strjoin(add, val);
-			set_env_value(env, key, val, 1);
-		}
+	key = ft_strdup(cmd, '+');
+	if (!key[0] || !is_valide(key))
+	{
+		error("export: `", cmd, "': not a valid identifier", NULL);
+		return (1);
+	}
+	else
+	{
+		val = ft_strdup(ft_strchr(cmd, '=') + 1, '\0');
+		add = get_env_value(*env, key);
+		if (add)
+			val = ft_strjoin(add, val);
+		set_env_value(env, key, val, 1);
+	}
+	return (0);
 }
 
-void ft_export_add(char *cmd, t_env **env)
+int ft_export_add(char *cmd, t_env **env)
 {
 	char	*key;
 	char	*val;
 
 	key = ft_strdup(cmd, '=');
 	if (!key[0] || !is_valide(key))
+	{
 		error("export: `", cmd, "': not a valid identifier", NULL);
+		return (1);
+	}
 	else
 	{
 		val = ft_strdup(ft_strchr(cmd, '=') + 1, '\0');
 		set_env_value(env, key, val, 1);
 	}
+	return (0);
 }
 
-void	ft_export(t_env **env, char **cmd)
+int	ft_export(t_env **env, char **cmd)
 {
 	int		i;
 	char	*res;
+	int		status;
 
+	status = 0;
 	i = 1;
 	if (!cmd[i])
 		ft_export_show(env);
@@ -101,17 +111,27 @@ void	ft_export(t_env **env, char **cmd)
 		if (!res)
 		{
 			if (!is_valide(cmd[i]))
-			error("export: `", cmd[i],"': not a valid identifier", NULL);
+			{
+				error("export: `", cmd[i],"': not a valid identifier", NULL);
+				status = 1;
+			}
 			else if(!get_env_value(*env, cmd[i]))
 				set_env_value(env, cmd[i], "", 0);
 		}
 		else
 		{
 			if (*(res - 1) == '+')
-				ft_export_concatenate(cmd[i], env);
+			{
+				if(ft_export_concatenate(cmd[i], env))
+				status = 1;
+			}
 			else
-				ft_export_add(cmd[i], env);
+			{
+				 if (ft_export_add(cmd[i], env))
+				 	status = 1;
+			}
 		}
 		i++;
 	}
+	return (status);
 }

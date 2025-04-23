@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 11:23:17 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/20 12:06:14 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/23 10:33:20 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 #include <stdio.h>
 #include <readline/readline.h>
-#include "pipex/GNL/get_next_line.h"
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
@@ -38,6 +37,7 @@ typedef enum e_token_type
 typedef struct s_file {
 	char			*file;
 	t_token_type	token;
+	int				here_doc;
 	struct s_file	*next;
 }	t_file;
 
@@ -57,12 +57,27 @@ typedef struct s_env
 	struct s_env	*next;
 }	t_env;
 
-void	ft_echo(char **cmd);
-void	ft_cd(char **cmd, t_env **env);
-void	ft_pwd(void);
-void	ft_exit(char **cmd, int last_cmd_status);
-void	ft_env(char **cmd, t_env *env);
-void	ft_unset(t_env **head, char **cmd);
+typedef	struct	s_shell
+{
+	t_env	*env;
+	int		last_status;
+}	t_shell;
+
+typedef struct s_pipex
+{
+	int 	pipe_fd[2];
+	int		prev_fd;
+	int		pid;
+	int		last_pid;
+	int		nb_cmd;
+}	t_pipex;
+
+int		ft_echo(char **cmd);
+int		ft_cd(char **cmd, t_env **env);
+int		ft_pwd(void);
+int		ft_exit(char **cmd, int last_cmd_status);
+int		ft_env(char **cmd, t_env *env);
+int		ft_unset(t_env **head, char **cmd);
 void	*ft_malloc(size_t n);
 void    ft_free(void *ptr, int flag);
 int		ft_strcmp(char *s1, char *s2);
@@ -87,15 +102,17 @@ void	sort_export(t_env **env);
 int 	handle_redir(t_main *main);
 int		heredoc_inputfd(char *v);
 char	*command_founder(t_env *env, char **cmd_args);
-int		run_single_cmd(t_main *main, t_env **env);
-void	run_builtins(t_main *main, t_env **env);
+void	run_single_cmd(t_main *main, t_shell *shell);
+int		run_builtins(t_main *main, t_shell *shell);
 void	extract_env(t_env **head, char **env);
 int		is_valide(char *str);
-void	ft_export(t_env **env, char **cmd);
+int		ft_export(t_env **env, char **cmd);
 char	**env_convertor(t_env *env);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *s, int fd);
-
+int		ft_atoi(const char *str, int *value);
+char	*ft_itoa(int n);
+void	run_multi_cmd(t_main *main, t_shell *shell);
 #endif

@@ -5,66 +5,123 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/19 13:45:03 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/20 11:22:20 by aouanni          ###   ########.fr       */
+/*   Created: 2025/04/21 17:14:45 by aouanni           #+#    #+#             */
+/*   Updated: 2025/04/22 13:28:24 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../builtin.h"
 
-int 	handle_redir(t_main *main)
+
+int	handle_redir_heredoc(t_main *main)
 {
-	int fd;
-	t_file *check_redir = main->redir;
-	while (check_redir)
+	int		fd;
+	t_file	*current;
+
+	current = main->redir;
+	while (current)
 	{
-		if (check_redir->token == 5)
+		if (current->token == 5)
 		{
-			fd = heredoc_inputfd(check_redir->file);
+			fd = heredoc_inputfd(current->file);
 			if (fd < 0)
 				return (1);
-			if (!check_redir->next)
-				dup2(fd, STDIN_FILENO);
-			close(fd);
+			current->here_doc = fd;
 		}
-	check_redir = check_redir->next;
+		current = current->next;
 	}
-	while(main->redir)
+	return (0);
+}
+
+void	heredoc_cleanup(t_file *redir)
+{
+	t_file	*current;
+
+	current = redir;
+	while (current)
 	{
-	if (main->redir->token == 2)
-	{
-		fd = open(main->redir->file, O_RDONLY);
-		if (fd < 0)
+		if (current->token == 5 && current->here_doc > -1)
 		{
-			printf("%s: No such file or directory\n", main->redir->file);
-			return (1);
+			close (current->here_doc);
+			current->here_doc = -1;
 		}
-		dup2(fd, STDIN_FILENO);
-		close(fd);
+		current = current->next;
 	}
-	else if (main->redir->token == 3)
+}
+
+int	handle_redir(t_main *main)
+{
+	int		fd;
+	t_file	*current;
+
+	current = main->redir;
+	if (handle_redir_heredoc(main))
 	{
-		fd = open(main->redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (fd < 0)
-		{
-			printf("%s: No such file or directory\n", main->redir->file);
-			return (1);
-		}
-		dup2(fd, STDOUT_FILENO);
-		close(fd);
+		heredoc_cleanup(main->redir);
+		return (1);
 	}
-	else if (main->redir->token == 4)
+	while (current)
 	{
-		fd = open(main->redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		if (fd < 0)
+		if (current->token == 2)
 		{
-			printf("%s: No such file or directory\n", main->redir->file);
-			return (1);
+			fd = open(current->file, O_RDONLY);
+			if (fd < 0)
+			{
+				error("minishell: ", current->file, ": ", strerror(errno));
+				return (1);
+			}
+			if (dup2(fd, 0) == -1)
+			{
+				perror("minishell: dup2");
+				close (fd);
+				return (1);
+			}
+			close (fd);
 		}
-		dup2(fd, STDOUT_FILENO);
-		close(fd);
-	}
-	main->redir = main->redir->next;
+		else if (current->token == 5)
+		{
+			if (dup2(current->here_doc, 0) == -1)
+			{
+				perror("minishell: dup2");
+				close (current->here_doc);
+				heredoc_cleanup(current);
+				return (1);
+			}
+			close (current->here_doc);
+		}
+		else if (current->token == 3)
+		{
+			fd = open (current->file, O_CREAT | O_WRONLY | O_TRUNC , 0644);
+			if (fd < 0)
+			{
+				error("minishell: ", current->file, ": ", strerror(errno));
+				return (1);
+			}
+			if (dup2(fd, 1) == -1)
+			{
+				perror("minishell: dup2");
+				close (fd);
+				return (1);
+			}
+			close (fd);
+		}
+		else if (current->token == 4)
+		{
+			fd = open(current->file, O_CREAT | O_WRONLY | O_APPEND, 0644);
+			if (fd < 0)
+			{
+				error("minishell: ", current->file, ": ", strerror(errno));
+				return (1);
+			}
+			if (dup2(fd, 1) == -1)
+			{
+				perror("minishell: dup2");
+				close(fd);
+				return (1);
+			}
+			close (fd);
+		}
+		current = current->next;
 	}
 	return (0);
 }

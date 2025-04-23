@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:46:23 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/19 13:46:33 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/22 11:34:31 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,34 @@ char	*check_path(t_env *env, char **cmd_args)
 {
 	char *path=get_env_value(env, "PATH");
 	if (!path)
-		printf("%s:  No such file or directory\n ", cmd_args[0]);
+	{
+		error("minishell: ", cmd_args[0], ": No such file or directory", NULL);
+		exit(127);
+	}
 	return (path);
 }
 
-char	*command_with_path(char **cmd_args, int exit)
+char	*command_with_path(char **cmd_args)
 {
 	char	*res;
+	int		fd;
 
-	if (access(cmd_args[0], X_OK) != 0)
+	fd = open(cmd_args[0], O_DIRECTORY);
+	if (fd != -1)
 	{
-		printf("%s: No such file or directory\n", cmd_args[0]);
-		my_exit();
+		error("minishell: ", cmd_args[0], ": is a directory", NULL);
+		exit(126);
+	}
+	if (access(cmd_args[0], F_OK) != 0)
+	{
+		error("minishell: ", cmd_args[0], ": No such file or directory", NULL);
+		exit(127);
 	}
 	res = ft_strdup(cmd_args[0], '\0');
 	return (res);
 }
 
-char	*command_without_path2(char **args, char **solo, char *cmd_s, int e)
+char	*command_without_path2(char **args, char **solo, char *cmd_s)
 {
 	char	*res;
 	int		i;
@@ -42,19 +52,19 @@ char	*command_without_path2(char **args, char **solo, char *cmd_s, int e)
 	while (solo[i])
 	{
 		res = ft_strjoin(solo[i], cmd_s);
-		if (access(res, X_OK) == 0)
+		if (access(res, F_OK) == 0)
 			break ;
 		i++;
 	}
 	if (!solo[i])
 	{
-		printf("%s : command not found\n", args[0]);
-		exit(e);
+		error("minishell: ", args[0], ": command not found", NULL);
+		exit(127);
 	}
 	return (res);
 }
 
-char	*command_without_path(t_env *env, char **cmd_args, int exit)
+char	*command_without_path(t_env *env, char **cmd_args)
 {
 	char	*cmd_slash;
 	char	*path_env;
@@ -64,13 +74,13 @@ char	*command_without_path(t_env *env, char **cmd_args, int exit)
 	path_env= check_path(env, cmd_args);
 	cmd_slash = ft_strjoin("/", cmd_args[0]);
 	path_solo = ft_split(path_env, ':');
-	return (command_without_path2(cmd_args, path_solo, cmd_slash, exit));
+	return (command_without_path2(cmd_args, path_solo, cmd_slash));
 }
 
 char	*command_founder(t_env *env, char **cmd_args)
 {
 	if (ft_strchr(cmd_args[0], '/'))
-		return (command_with_path(cmd_args, 1));
+		return (command_with_path(cmd_args));
 	else
-		return (command_without_path(env, cmd_args, 1));
+		return (command_without_path(env, cmd_args));
 }

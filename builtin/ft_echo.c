@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 10:32:13 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/18 12:47:34 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/21 12:20:12 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	ft_echo2(char **cmd, int i, int new_line)
 		ft_putstr_fd("\n", 1);
 }
 
-void	ft_echo(char **cmd)
+int	ft_echo(char **cmd)
 {
 	int	i;
 	int	j;
@@ -47,4 +47,5 @@ void	ft_echo(char **cmd)
 			break ;
 	}
 	ft_echo2(cmd, i, new_line);
+	return (0);
 }
