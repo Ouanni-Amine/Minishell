@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:23:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/22 17:28:20 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/24 23:30:46 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,6 @@ void	run_single_cmd(t_main *main, t_shell *shell)
 	char	*path;
 	int		status;
 
-
 	update_underscore(shell->env, main);
 	if (main->is_builtin)
 		shell->last_status = handle_builtins(main, shell);
@@ -132,7 +131,7 @@ void	run_single_cmd(t_main *main, t_shell *shell)
 			char **new_env=env_convertor(shell->env);
 			execve(path, main->cmd, new_env);
 			error("minishell: ", main->cmd[0], " : ", strerror(errno));
-			exit(126);
+			exit(1);
 		}
 		else
 		{

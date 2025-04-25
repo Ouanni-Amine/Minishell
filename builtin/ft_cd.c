@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 12:45:04 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/21 12:58:32 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/25 13:07:42 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int	ft_cd3(t_env **env, char *oldpwd, char *pwd)
 	{
 		set_env_value(env, "OLDPWD", oldpwd, 1);
 		set_env_value(env, "PWD", pwd, 1);
+		free(pwd);
 	}
 	return (0);
 }
@@ -37,17 +38,12 @@ int	ft_cd2(t_env **env, char *oldpwd, char *pwd)
 	}
 	if (chdir(home) == -1)
 		return (perror("cd"), 1);
-	else
-	{
-		pwd = getcwd(NULL, 0);
-		if (!pwd)
-			return (perror("cd"), 1);
-		else
-		{
-			set_env_value(env, "PWD", pwd, 1);
-			set_env_value(env, "OLDPWD", oldpwd, 1);
-		}
-	}
+	pwd = getcwd(NULL, 0);
+	if (!pwd)
+		return (perror("cd"), 1);
+	set_env_value(env, "PWD", pwd, 1);
+	set_env_value(env, "OLDPWD", oldpwd, 1);
+	free(pwd);
 	return (0);
 }
 
@@ -56,11 +52,15 @@ int	ft_cd(char **cmd, t_env **env)
 	char	*oldpwd;
 	char	*pwd;
 
+	pwd = NULL;
 	oldpwd = getcwd(NULL, 0);
 	if (!cmd[1])
 	{
 		if (ft_cd2(env, oldpwd, pwd))
+		{
+			free(oldpwd);
 			return (1);
+		}
 	}
 	else
 	{
@@ -74,13 +74,18 @@ int	ft_cd(char **cmd, t_env **env)
 		if (chdir(cmd[1]) == -1)
 		{
 			error("minishell: cd: ", cmd[1], ": ", "No such file or directory");
+			free(oldpwd);
 			return (1);
 		}
 		else
 		{
 			if (ft_cd3(env, oldpwd, pwd))
+			{
+				free(oldpwd);
 				return (1);
+			}
 		}
 	}
+	free(oldpwd);
 	return (0);
 }

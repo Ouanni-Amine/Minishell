@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 16:09:06 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/20 17:57:01 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/25 13:20:45 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,9 @@ void	ft_unset2(t_env *current, t_env *prev, char *cmd, t_env **head)
 				prev->next = current->next;
 			else
 				*head = current->next;
+			free(current->key);
+			free(current->value);
+			free(current);
 			break ;
 		}
 		prev = current;

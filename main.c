@@ -33,6 +33,64 @@
 // }
 
 
+void	print_file_list(t_file *head)
+{
+	while (head)
+	{
+		printf("        token = %s\n",
+			head->token == TOKEN_REDIR_IN ? "REDIR_IN" :
+			head->token == TOKEN_REDIR_OUT ? "REDIR_OUT" :
+			head->token == TOKEN_REDIR_APPEND ? "REDIR_APPEND" :
+			head->token == TOKEN_REDIR_HEREDOC ? "HEREDOC" :
+			head->token == TOKEN_ENV_VAR ? "VARIABLE" : "UNKNOWN");
+		printf("        file = \"%s\"\n", head->file);
+		if (head->next)
+			printf("        next →\n");
+		else
+			printf("        next = NULL\n");
+		head = head->next;
+	}
+}
+
+void	print_main_debug(t_main *head)
+{
+	int i = 0;
+
+	while (head)
+	{
+		printf("t_main {\n");
+		printf("    cmd = [");
+		if (head->cmd)
+		{
+			while (head->cmd[i])
+			{
+				printf("%s", head->cmd[i]);
+				if (head->cmd[i + 1])
+					printf(", ");
+				i++;
+			}
+		}
+		printf(", NULL]\n");
+		if (head->redir == NULL)
+			printf("    head = NULL  // no redirection\n");
+		else
+		{
+			printf("    head = t_file {\n");
+			print_file_list(head->redir);
+			printf("    }\n");
+		}
+		if (head->next)
+			printf("    next →\n");
+		else
+			printf("    next = NULL\n");
+		printf("}\n\n");
+		head = head->next;
+		i = 0;
+	}
+}
+
+
+
 t_token_type get_token_type(char *str)
 {
     if (!str)
@@ -180,34 +238,30 @@ t_main *mini_parse(char *line)
         if (tokens[i] && get_token_type(tokens[i]) == TOKEN_PIPE)
             i++;
     }
-
-    // Clean up original token array
-    for (i = 0; tokens[i]; i++)
-        free(tokens[i]);
-    free(tokens);
-
     return head;
 }
 
 int main(int argc, char **argv, char **env)
 {
-    t_shell *head = ft_malloc(sizeof(t_shell));
+    t_shell *head = malloc(sizeof(t_shell));
     head->env = NULL;
     head->last_status = 0;
 
     extract_env(&head->env, env);
-
+	get_shell(head);
     while (1)
     {
         char *line = readline("Minishell> ");
         if (!line)
             break;
-
         t_main *main = mini_parse(line);
+		// print_main_debug(main);
         if (!main->next)
             run_single_cmd(main, head);
         else
             run_multi_cmd(main, head);
+		free(line);
+		my_clean();
     }
     return 0;
 }

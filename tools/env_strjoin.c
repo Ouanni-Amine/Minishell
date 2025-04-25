@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   env_strjoin.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 17:03:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/24 22:48:17 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/24 21:06:42 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static char	*fill(const char *s, char *p)
 	return (p);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*env_strjoin(char const *s1, char const *s2)
 {
 	size_t	s1len;
 	size_t	s2len;
@@ -33,12 +33,14 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	if (!s1 && !s2)
 		return (NULL);
 	if (!s1)
-		return (ft_strdup(s2, '\0'));
+		return (env_strdup(s2, '\0'));
 	if (!s2)
-		return (ft_strdup(s1, '\0'));
+		return (env_strdup(s1, '\0'));
 	s1len = ft_strlen(s1, '\0');
 	s2len = ft_strlen(s2, '\0');
-	p = (char *)ft_malloc(sizeof(char) * (s1len + s2len +1));
+	p = (char *)malloc(sizeof(char) * (s1len + s2len +1));
+	if (p == NULL)
+		return (NULL);
 	r = p;
 	p = fill(s1, p);
 	p = fill(s2, p);

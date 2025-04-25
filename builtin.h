@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 11:23:17 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/23 10:33:20 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/24 22:48:55 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,12 @@ typedef enum e_token_type
 typedef struct s_file {
 	char			*file;
 	t_token_type	token;
-	int				here_doc;
+	int				here_doc; // -1
+	int				expand;
 	struct s_file	*next;
 }	t_file;
+// 0 no expand
+// 1 expand  limiter != '' && ""
 
 typedef struct s_main {
 	char			**cmd;
@@ -90,10 +93,11 @@ char	*get_env_value(t_env *env, char *key);
 void	set_env_value(t_env **head, char *key, char *value, int i);
 size_t	ft_strlen(const char *s, char c);
 char	*ft_strdup(const char *s1, char c);
+char	*env_strdup(const char *s1, char c);
 int		get_lenght(t_env *head);
 char	**ft_split(const char *s, char c);
 int		ft_isalnum_unscore(char *str);
-void    my_exit(void);
+void    my_exit(int status);
 void	ft_putstr_fd(char *s, int fd);
 char	*ft_strjoin(char const *s1, char const *s2);
 void	error(char *str1, char *str2, char *str3, char *str4);
@@ -115,4 +119,7 @@ void	ft_putstr_fd(char *s, int fd);
 int		ft_atoi(const char *str, int *value);
 char	*ft_itoa(int n);
 void	run_multi_cmd(t_main *main, t_shell *shell);
+t_shell	*get_shell(t_shell *shell);
+char	*env_strjoin(char const *s1, char const *s2);
+void	my_clean(void);
 #endif

@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 20:18:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/21 14:50:49 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/25 13:11:42 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,15 @@ int	ft_exit(char **cmd, int last_cmd_status)
 		{
 			error("minishell: exit: ", cmd[1],
 				": numeric argument required", NULL);
-			exit(255);
+			my_exit(255);
 		}
 		if (cmd[2])
 		{
 			error("minishell: exit: too many arguments", NULL, NULL, NULL);
 			return (1);
 		}
-		exit(fail % 256);
+		my_exit(fail % 256);
 	}
-	exit(last_cmd_status);
+	my_exit(last_cmd_status);
+	return (0);
 }

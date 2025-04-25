@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 21:02:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/20 17:21:55 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/25 00:00:31 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,21 +59,40 @@ int ft_export_concatenate(char *cmd, t_env **env)
 	char	*val;
 	char	*add;
 
-	key = ft_strdup(cmd, '+');
+	key = env_strdup(cmd, '+');
+	if (!key)
+		my_exit(1);
 	if (!key[0] || !is_valide(key))
 	{
 		error("export: `", cmd, "': not a valid identifier", NULL);
+		free(key);
 		return (1);
 	}
-	else
-	{
-		val = ft_strdup(ft_strchr(cmd, '=') + 1, '\0');
 		add = get_env_value(*env, key);
 		if (add)
-			val = ft_strjoin(add, val);
-		set_env_value(env, key, val, 1);
-	}
-	return (0);
+		{
+			val = env_strjoin(add, ft_strchr(cmd, '=') + 1);
+			if (!val)
+			{
+				free(key);
+				my_exit(1);
+			}
+			set_env_value(env, key, val, 1);
+			free(val);
+		}
+		else
+		{
+			val = env_strdup(ft_strchr(cmd, '=') + 1, '\0');
+			if (!val)
+			{
+				free(key);
+				my_exit(1);
+			}
+			set_env_value(env, key, val, 1);
+			free(val);
+		}
+		free(key);
+		return (0);
 }
 
 int ft_export_add(char *cmd, t_env **env)
@@ -81,17 +100,25 @@ int ft_export_add(char *cmd, t_env **env)
 	char	*key;
 	char	*val;
 
-	key = ft_strdup(cmd, '=');
+	key = env_strdup(cmd, '=');
+	if (!key)
+		my_exit(1);
 	if (!key[0] || !is_valide(key))
 	{
 		error("export: `", cmd, "': not a valid identifier", NULL);
+		free(key);
 		return (1);
 	}
-	else
+
+	val = env_strdup(ft_strchr(cmd, '=') + 1, '\0');
+	if (!val)
 	{
-		val = ft_strdup(ft_strchr(cmd, '=') + 1, '\0');
-		set_env_value(env, key, val, 1);
+		free(key);
+		my_exit(1);
 	}
+	set_env_value(env, key, val, 1);
+	free(key);
+	free(val);
 	return (0);
 }
 
@@ -135,3 +162,4 @@ int	ft_export(t_env **env, char **cmd)
 	}
 	return (status);
 }
+

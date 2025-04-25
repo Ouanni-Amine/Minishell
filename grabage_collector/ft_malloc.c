@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:23:52 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/18 18:25:44 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/25 13:13:01 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,42 @@ void	ft_free(void *ptr, int flag)
 	if (flag)
 	{
 		j = 0;
-		while (lst[j])
-			free(lst[j++]);
+		while (j < i && lst[j])
+		{
+			free(lst[j]);
+			lst[j] = NULL;
+			j++;
+		}
+		i = 0;
 	}
-	else
-		lst[i++] = ptr;
+else
+	lst[i++] = ptr;
 }
 
-void	my_exit(void)
+void	my_clean(void)
 {
 	ft_free(NULL, 1);
-	exit(1);
+}
+
+void	my_exit(status)
+{
+	t_shell	*shell;
+	t_env	*env;
+	t_env	*next;
+
+	ft_free(NULL, 1);
+	shell = get_shell(NULL);
+	env = shell->env;
+	while (env)
+	{
+		next= env->next;
+		free(env->key);
+		free(env->value);
+		free(env);
+		env = next;
+	}
+	free(shell);
+	exit(status);
 }
 
 void	*ft_malloc(size_t n)
@@ -40,7 +65,7 @@ void	*ft_malloc(size_t n)
 
 	ptr = malloc(n);
 	if (!ptr)
-		my_exit();
+		my_exit(1);
 	ft_free(ptr, 0);
 	return (ptr);
 }

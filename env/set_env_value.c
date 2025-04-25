@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:13:51 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/19 16:47:33 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/24 23:57:42 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,10 @@ void	set_env_value(t_env **head, char *key, char *value, int i)
 	{
 		if (!ft_strcmp(key, temp->key))
 		{
-			temp->value = ft_strdup(value, '\0');
+			free(temp->value);
+			temp->value = env_strdup(value, '\0');
+			if (!temp->value)
+				my_exit(1);
 			temp->is_active = i;
 			return ;
 		}

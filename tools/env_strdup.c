@@ -1,28 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   env_strdup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/06 16:59:49 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/25 13:09:17 by aouanni          ###   ########.fr       */
+/*   Created: 2025/04/24 20:46:01 by aouanni           #+#    #+#             */
+/*   Updated: 2025/04/24 22:12:59 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../builtin.h"
 
-int	ft_pwd(void)
+char	*env_strdup(const char *s1, char c)
 {
-	char	*path;
+	size_t	i;
+	char	*p;
+	size_t	len;
 
-	path = getcwd(NULL, 0);
-	if (!path)
+	len = ft_strlen(s1, c);
+	i = 0;
+	p = (char *)malloc((len + 1) * sizeof(char));
+	if (p == NULL)
+		return (NULL);
+	while (i < len)
 	{
-		perror("pwd");
-		return (1);
+		p[i] = s1[i];
+		i++;
 	}
-	printf("%s\n", path);
-	free(path);
-	return (0);
+	p[i] = '\0';
+	return (p);
 }

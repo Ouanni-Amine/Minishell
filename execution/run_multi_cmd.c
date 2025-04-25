@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 09:41:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/23 11:02:14 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/24 16:59:00 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void	cleanup_exit_process(int *pipe_fd, int prev_fd, int pipe_created, int i)
 		close(pipe_fd[1]);
 		close(pipe_fd[0]);
 	}
-	perror("minishell: dup2");
 	if (i)
 		exit(1);
 }
@@ -52,7 +51,10 @@ while (i < pipex.nb_cmd)
 		if (pipe(pipex.pipe_fd) < 0)
 		{
 			cleanup_exit_process(pipex.pipe_fd, pipex.prev_fd, 0, 0);
+				perror("minishell: pipe");
 			shell->last_status = 1;
+			while (wait(NULL) > 0)
+			;
 			return ;
 		}
 	}
@@ -61,6 +63,9 @@ while (i < pipex.nb_cmd)
 	{
 		cleanup_exit_process(pipex.pipe_fd, pipex.prev_fd, diff, 0);
 		shell->last_status = 1;
+		perror("minishell: fork");
+		while (wait(NULL) > 0)
+			;
 		return ;
 	}
 	if (pipex.pid == 0)
@@ -68,13 +73,19 @@ while (i < pipex.nb_cmd)
 		if (i > 0)
 		{
 			if (dup2(pipex.prev_fd, STDIN_FILENO) < 0)
+			{
+				perror("minishell: dup2");
 				cleanup_exit_process(pipex.pipe_fd, pipex.prev_fd, diff, 1);
+			}
 			close(pipex.prev_fd);
 		}
 		if (diff)
 		{
 			if (dup2(pipex.pipe_fd[1], STDOUT_FILENO) < 0)
+			{
+				perror("minishell: dup2");
 				cleanup_exit_process(pipex.pipe_fd, pipex.prev_fd, diff, 1);
+			}
 			close(pipex.pipe_fd[0]);
 			close(pipex.pipe_fd[1]);
 

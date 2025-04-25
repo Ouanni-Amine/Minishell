@@ -1,28 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_pwd.c                                           :+:      :+:    :+:   */
+/*   get_shell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/06 16:59:49 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/25 13:09:17 by aouanni          ###   ########.fr       */
+/*   Created: 2025/04/24 20:37:48 by aouanni           #+#    #+#             */
+/*   Updated: 2025/04/24 22:48:34 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../builtin.h"
 
-int	ft_pwd(void)
+t_shell	*get_shell(t_shell *shell)
 {
-	char	*path;
+    static t_shell *global_shell = NULL;
 
-	path = getcwd(NULL, 0);
-	if (!path)
-	{
-		perror("pwd");
-		return (1);
-	}
-	printf("%s\n", path);
-	free(path);
-	return (0);
+    if (shell)
+        global_shell = shell;
+
+    return global_shell;
 }
