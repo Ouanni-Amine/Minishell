@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 14:26:57 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/22 14:27:06 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:16:46 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 static unsigned int	count(int n)
 {
@@ -41,9 +41,7 @@ char	*ft_itoa(int n)
 		is_negative = 1;
 	k = n;
 	len = is_negative + count(n);
-	p = (char *)malloc(sizeof(char) * (len + 1));
-	if (p == NULL)
-		return (NULL);
+	p = (char *)ft_malloc(sizeof(char) * (len + 1));
 	p[len] = '\0';
 	if (is_negative == 1)
 		k *= -1;

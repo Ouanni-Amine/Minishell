@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 09:41:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/24 16:59:00 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/01 17:24:22 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 void	cleanup_exit_process(int *pipe_fd, int prev_fd, int pipe_created, int i)
 {
@@ -25,7 +25,7 @@ void	cleanup_exit_process(int *pipe_fd, int prev_fd, int pipe_created, int i)
 		exit(1);
 }
 
-void	run_multi_cmd(t_main *main, t_shell *shell)
+int	run_multi_cmd(t_main *main, t_shell *shell)
 {
 	t_pipex	pipex;
 	int  i= 0;
@@ -34,7 +34,10 @@ void	run_multi_cmd(t_main *main, t_shell *shell)
 	int	diff;
 	char *path;
 	char **new_env;
+	int last_status;
 
+if (handle_redir_heredoc(main, shell->env))
+	return (heredoc_cleanup(main), 1);//TODO: fork for the here_docs to handle the signal problem
 pipex.prev_fd = STDIN_FILENO;
 pipex.nb_cmd = 0;
 while (current)
@@ -50,23 +53,19 @@ while (i < pipex.nb_cmd)
 	{
 		if (pipe(pipex.pipe_fd) < 0)
 		{
-			cleanup_exit_process(pipex.pipe_fd, pipex.prev_fd, 0, 0);
-				perror("minishell: pipe");
-			shell->last_status = 1;
 			while (wait(NULL) > 0)
 			;
-			return ;
+			cleanup_exit_process(pipex.pipe_fd, pipex.prev_fd, 0, 0);
+			return (perror("minishell: pipe"), heredoc_cleanup(main), 1);
 		}
 	}
 	pipex.pid = fork();
 	if (pipex.pid < 0)
 	{
-		cleanup_exit_process(pipex.pipe_fd, pipex.prev_fd, diff, 0);
-		shell->last_status = 1;
-		perror("minishell: fork");
 		while (wait(NULL) > 0)
 			;
-		return ;
+		cleanup_exit_process(pipex.pipe_fd, pipex.prev_fd, diff, 0);
+		return (perror("minishell: fork"), heredoc_cleanup(main), 1);
 	}
 	if (pipex.pid == 0)
 	{
@@ -94,17 +93,16 @@ while (i < pipex.nb_cmd)
 			cleanup_exit_process(pipex.pipe_fd, pipex.prev_fd, diff, 1);
 		if (!current->is_builtin)
 		{
-			path = command_founder(shell->env, current->cmd);
+			path = command_founder(current->cmd, shell->env);
 			new_env=env_convertor(shell->env);
 			execve(path, current->cmd, new_env);
-		error("minishell: ", current->cmd[0], " : ", strerror(errno));
-		exit(126);
+			perror("minishell: execve");
+			exit(1);
 		}
 		else
 		{
-			if (run_builtins(current, shell))
-				exit(1);
-			exit(0);
+			status = run_builtins(current, shell);
+				exit(status);
 		}
 	}
 	else
@@ -126,8 +124,14 @@ i = 0;
 while (i < pipex.nb_cmd)
 {
 	int wpid = wait(&status);
-	if (wpid == pipex.last_pid && WIFEXITED(status))
-		shell->last_status = WEXITSTATUS(status);
+	if (wpid == pipex.last_pid)
+	{
+		if (WIFEXITED(status))
+			last_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			last_status = 128 + WTERMSIG(status);
+	}
 	i++;
 }
+return (heredoc_cleanup(main), last_status);
 }

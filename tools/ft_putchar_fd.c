@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 10:44:21 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/20 10:44:33 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:09:33 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 void	ft_putchar_fd(char c, int fd)
 {

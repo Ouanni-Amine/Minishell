@@ -6,13 +6,13 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 10:32:13 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/21 12:20:12 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:07:13 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
-void	ft_echo2(char **cmd, int i, int new_line)
+void	echo_print(char **cmd, int i, int new_line)
 {
 	while (cmd[i])
 	{
@@ -46,6 +46,6 @@ int	ft_echo(char **cmd)
 		else
 			break ;
 	}
-	ft_echo2(cmd, i, new_line);
+	echo_print(cmd, i, new_line);
 	return (0);
 }

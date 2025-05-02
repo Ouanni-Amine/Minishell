@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:13:51 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/24 23:57:42 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/01 17:49:59 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 void	set_env_value(t_env **head, char *key, char *value, int i)
 {
@@ -32,5 +32,5 @@ void	set_env_value(t_env **head, char *key, char *value, int i)
 		}
 		temp = temp->next;
 	}
-	env_add_back(head, create_env_node(key, value, i));
+		env_add_back(head, create_env_node(key, value, i));
 }

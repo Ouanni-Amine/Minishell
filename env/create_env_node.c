@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:11:24 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/24 22:12:06 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:07:40 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 t_env	*create_env_node(char *key, char *value, int i)
 {
@@ -21,10 +21,17 @@ t_env	*create_env_node(char *key, char *value, int i)
 		my_exit(1);
 	node->key = env_strdup(key, '\0');
 	if (!node->key)
+	{
+		free(node);
 		my_exit(1);
+	}
 	node->value = env_strdup(value, '\0');
 	if (!node->value)
+	{
+		free(node->key);
+		free(node);
 		my_exit(1);
+	}
 	node->is_active = i;
 	node->next = NULL;
 	return (node);

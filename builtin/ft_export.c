@@ -6,38 +6,37 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 21:02:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/25 00:00:31 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/01 14:04:57 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 void	ft_export_show2(t_env *node)
 {
-	if (strcmp(node->key, "_"))
+	if (!strcmp(node->key, "_"))
+		return ;
+	if (node->is_active)
 	{
-		if (node->is_active)
-		{
-			if (node->value && node->value[0])
-				printf("declare -x %s=\"%s\"\n", node->key, node->value);
-			else
-				printf("declare -x %s=\"\"\n", node->key);
-		}
+		if (node->value && node->value[0])
+			printf("declare -x %s=\"%s\"\n", node->key, node->value);
 		else
-			printf("declare -x %s\n", node->key);
+			printf("declare -x %s=\"\"\n", node->key);
 	}
+	else
+		printf("declare -x %s\n", node->key);
 }
 
 void	ft_export_show(t_env **env)
 {
-	int		j;
+	int		len;
 	int		i;
 	t_env	*node;
 
 	i = 0;
-	j = get_lenght(*env);
+	len = get_lenght(*env);
 	sort_export(env);
-	while (i < j)
+	while (i < len)
 	{
 		node = *env;
 		while (node)
@@ -53,79 +52,34 @@ void	ft_export_show(t_env **env)
 	}
 }
 
-int ft_export_concatenate(char *cmd, t_env **env)
+void	ft_export_func(char *cmd, t_env **env, char *res, int *status)
 {
 	char	*key;
-	char	*val;
 	char	*add;
 
-	key = env_strdup(cmd, '+');
-	if (!key)
-		my_exit(1);
-	if (!key[0] || !is_valide(key))
+	if (*(res - 1) == '+')
+		key = ft_strdup(cmd, '+');
+	else
+		key = ft_strdup(cmd, '=');
+	if (!key[0] || !is_valide(key) || *(res - 2) == '+')
 	{
-		error("export: `", cmd, "': not a valid identifier", NULL);
-		free(key);
-		return (1);
+		error("minishell: export: `", cmd, "': not a valid identifier", NULL);
+		*status = 1;
 	}
-		add = get_env_value(*env, key);
-		if (add)
-		{
-			val = env_strjoin(add, ft_strchr(cmd, '=') + 1);
-			if (!val)
-			{
-				free(key);
-				my_exit(1);
-			}
-			set_env_value(env, key, val, 1);
-			free(val);
-		}
-		else
-		{
-			val = env_strdup(ft_strchr(cmd, '=') + 1, '\0');
-			if (!val)
-			{
-				free(key);
-				my_exit(1);
-			}
-			set_env_value(env, key, val, 1);
-			free(val);
-		}
-		free(key);
-		return (0);
-}
-
-int ft_export_add(char *cmd, t_env **env)
-{
-	char	*key;
-	char	*val;
-
-	key = env_strdup(cmd, '=');
-	if (!key)
-		my_exit(1);
-	if (!key[0] || !is_valide(key))
+	if (*(res - 1) == '+')
 	{
-		error("export: `", cmd, "': not a valid identifier", NULL);
-		free(key);
-		return (1);
+		add = ft_strjoin(get_env_value(*env, key), ft_strchr(cmd, '=') + 1);
+		if (!add)
+			add = "";
+		set_env_value(env, key, add, 1);
 	}
-
-	val = env_strdup(ft_strchr(cmd, '=') + 1, '\0');
-	if (!val)
-	{
-		free(key);
-		my_exit(1);
-	}
-	set_env_value(env, key, val, 1);
-	free(key);
-	free(val);
-	return (0);
+	else
+		set_env_value(env, key, ft_strchr(cmd, '=') + 1, 1);
 }
 
 int	ft_export(t_env **env, char **cmd)
 {
 	int		i;
-	char	*res;
 	int		status;
 
 	status = 0;
@@ -134,32 +88,20 @@ int	ft_export(t_env **env, char **cmd)
 		ft_export_show(env);
 	while (cmd[i])
 	{
-		res = ft_strchr(cmd[i], '=');
-		if (!res)
+		if (!ft_strchr(cmd[i], '='))
 		{
 			if (!is_valide(cmd[i]))
 			{
-				error("export: `", cmd[i],"': not a valid identifier", NULL);
+				error("minishell: export: `", cmd[i],
+					"': not a valid identifier", NULL);
 				status = 1;
 			}
-			else if(!get_env_value(*env, cmd[i]))
+			if (!get_env_value(*env, cmd[i]))
 				set_env_value(env, cmd[i], "", 0);
 		}
 		else
-		{
-			if (*(res - 1) == '+')
-			{
-				if(ft_export_concatenate(cmd[i], env))
-				status = 1;
-			}
-			else
-			{
-				 if (ft_export_add(cmd[i], env))
-				 	status = 1;
-			}
-		}
+			ft_export_func(cmd[i], env, ft_strchr(cmd[i], '='), &status);
 		i++;
 	}
 	return (status);
 }
-

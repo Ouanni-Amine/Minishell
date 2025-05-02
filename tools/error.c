@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 16:57:27 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/19 14:29:06 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:14:27 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 void	error(char *str1, char *str2, char *str3, char *str4)
 {
@@ -19,7 +19,7 @@ void	error(char *str1, char *str2, char *str3, char *str4)
 	if (!str2 && str1)
 	{
 		res = ft_strjoin(str1, "\n");
-		write(2, res, ft_strlen(res, '\0'));
+		write(2, res, env_strlen(res, '\0'));
 		return ;
 	}
 	if (str2)
@@ -29,5 +29,5 @@ void	error(char *str1, char *str2, char *str3, char *str4)
 	if (str4)
 		res = ft_strjoin(res, str4);
 	res = ft_strjoin(res, "\n");
-	write(2, res, ft_strlen(res, '\0'));
+	write(2, res, env_strlen(res, '\0'));
 }

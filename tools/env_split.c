@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
+/*   env_split.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 16:53:41 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/18 16:53:53 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:37:47 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 static int	count_words(const char *s, char c)
 {
@@ -61,7 +61,7 @@ static char	**split_string(const char *s, char c, char **split, size_t n)
 	return (split);
 }
 
-char	**ft_split(const char *s, char c)
+char	**env_split(const char *s, char c)
 {
 	int		word_count;
 	char	**result;

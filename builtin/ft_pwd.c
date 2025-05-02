@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 16:59:49 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/25 13:09:17 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:07:29 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 int	ft_pwd(void)
 {
@@ -19,7 +19,7 @@ int	ft_pwd(void)
 	path = getcwd(NULL, 0);
 	if (!path)
 	{
-		perror("pwd");
+		perror("minishell: pwd");
 		return (1);
 	}
 	printf("%s\n", path);

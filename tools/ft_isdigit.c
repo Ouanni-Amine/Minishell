@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 16:50:44 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/18 16:51:16 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:09:23 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 int	ft_isdigit(int c)
 {

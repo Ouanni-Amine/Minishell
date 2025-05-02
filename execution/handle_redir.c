@@ -6,47 +6,58 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 17:14:45 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/22 13:28:24 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/01 17:22:52 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
-
-int	handle_redir_heredoc(t_main *main)
+int	redirect_input(t_file *current)
 {
-	int		fd;
-	t_file	*current;
+	int	fd;
+	int	flag;
 
-	current = main->redir;
-	while (current)
+	if (current->token == 2)
 	{
-		if (current->token == 5)
+		fd = open(current->file, O_RDONLY);
+		if (fd < 0)
 		{
-			fd = heredoc_inputfd(current->file);
-			if (fd < 0)
-				return (1);
-			current->here_doc = fd;
+			error("minishell: ", current->file, ": ", strerror(errno));
+			return (1);
 		}
-		current = current->next;
 	}
-	return (0);
+	else
+		fd = current->here_doc;
+	if (dup2(fd, 0) == -1)
+	{
+		perror("minishell: dup2");
+		return (close(fd), 1);
+	}
+	return (close(fd), 0);
 }
 
-void	heredoc_cleanup(t_file *redir)
+int	redirect_output(t_file *current)
 {
-	t_file	*current;
+	int	fd;
+	int	flag;
 
-	current = redir;
-	while (current)
+	flag = O_CREAT | O_WRONLY;
+	if (current->token == 3)
+		flag |= O_TRUNC;
+	else
+		flag |= O_APPEND;
+	fd = open(current->file, flag, 0644);
+	if (fd < 0)
 	{
-		if (current->token == 5 && current->here_doc > -1)
-		{
-			close (current->here_doc);
-			current->here_doc = -1;
-		}
-		current = current->next;
+		error("minishell: ", current->file, ": ", strerror(errno));
+		return (1);
 	}
+	if (dup2(fd, 1) == -1)
+	{
+		perror("minishell: dup2");
+		return (close(fd), 1);
+	}
+	return (close(fd), 0);
 }
 
 int	handle_redir(t_main *main)
@@ -55,71 +66,22 @@ int	handle_redir(t_main *main)
 	t_file	*current;
 
 	current = main->redir;
-	if (handle_redir_heredoc(main))
-	{
-		heredoc_cleanup(main->redir);
-		return (1);
-	}
 	while (current)
 	{
-		if (current->token == 2)
+		if (current->ambiguous)
 		{
-			fd = open(current->file, O_RDONLY);
-			if (fd < 0)
-			{
-				error("minishell: ", current->file, ": ", strerror(errno));
-				return (1);
-			}
-			if (dup2(fd, 0) == -1)
-			{
-				perror("minishell: dup2");
-				close (fd);
-				return (1);
-			}
-			close (fd);
+			error("minishell: ", current->file, ": ambiguous redirect", 0);
+			return (1);
 		}
-		else if (current->token == 5)
+		if (current->token == 2 || current->token == 5)
 		{
-			if (dup2(current->here_doc, 0) == -1)
-			{
-				perror("minishell: dup2");
-				close (current->here_doc);
-				heredoc_cleanup(current);
+			if (redirect_input(current))
 				return (1);
-			}
-			close (current->here_doc);
 		}
-		else if (current->token == 3)
+		else if (current->token == 3 || current->token == 4)
 		{
-			fd = open (current->file, O_CREAT | O_WRONLY | O_TRUNC , 0644);
-			if (fd < 0)
-			{
-				error("minishell: ", current->file, ": ", strerror(errno));
+			if (redirect_output(current))
 				return (1);
-			}
-			if (dup2(fd, 1) == -1)
-			{
-				perror("minishell: dup2");
-				close (fd);
-				return (1);
-			}
-			close (fd);
-		}
-		else if (current->token == 4)
-		{
-			fd = open(current->file, O_CREAT | O_WRONLY | O_APPEND, 0644);
-			if (fd < 0)
-			{
-				error("minishell: ", current->file, ": ", strerror(errno));
-				return (1);
-			}
-			if (dup2(fd, 1) == -1)
-			{
-				perror("minishell: dup2");
-				close(fd);
-				return (1);
-			}
-			close (fd);
 		}
 		current = current->next;
 	}

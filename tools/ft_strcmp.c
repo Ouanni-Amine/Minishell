@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 16:51:33 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/18 16:51:44 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:09:52 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 int	ft_strcmp(char *s1, char *s2)
 {

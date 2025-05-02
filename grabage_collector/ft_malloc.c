@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:23:52 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/25 13:13:01 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:08:59 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 void	ft_free(void *ptr, int flag)
 {
@@ -29,8 +29,8 @@ void	ft_free(void *ptr, int flag)
 		}
 		i = 0;
 	}
-else
-	lst[i++] = ptr;
+	else
+		lst[i++] = ptr;
 }
 
 void	my_clean(void)
@@ -38,7 +38,7 @@ void	my_clean(void)
 	ft_free(NULL, 1);
 }
 
-void	my_exit(status)
+void	my_exit(int status)
 {
 	t_shell	*shell;
 	t_env	*env;
@@ -49,7 +49,7 @@ void	my_exit(status)
 	env = shell->env;
 	while (env)
 	{
-		next= env->next;
+		next = env->next;
 		free(env->key);
 		free(env->value);
 		free(env);

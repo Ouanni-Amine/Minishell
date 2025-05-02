@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:14:29 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/18 18:21:25 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:08:06 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 int	get_lenght(t_env *head)
 {

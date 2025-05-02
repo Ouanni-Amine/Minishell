@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 17:03:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/24 21:06:42 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:14:15 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 static char	*fill(const char *s, char *p)
 {
@@ -36,8 +36,8 @@ char	*env_strjoin(char const *s1, char const *s2)
 		return (env_strdup(s2, '\0'));
 	if (!s2)
 		return (env_strdup(s1, '\0'));
-	s1len = ft_strlen(s1, '\0');
-	s2len = ft_strlen(s2, '\0');
+	s1len = env_strlen(s1, '\0');
+	s2len = env_strlen(s2, '\0');
 	p = (char *)malloc(sizeof(char) * (s1len + s2len +1));
 	if (p == NULL)
 		return (NULL);

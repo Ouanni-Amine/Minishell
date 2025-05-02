@@ -6,11 +6,11 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 17:07:58 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/24 21:34:29 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/04/26 21:07:53 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../builtin.h"
+#include "../parse/minishell.h"
 
 char	**env_convertor(t_env *env)
 {
@@ -27,10 +27,9 @@ char	**env_convertor(t_env *env)
 	{
 		value = ft_strjoin(env->key, "=");
 		value = ft_strjoin(value, env->value);
-		res[i] = ft_strdup(value, '\0');
-		i++;
+		res[i] = value;
 		env = env->next;
+		i++;
 	}
 	return (res);
 }
-
