@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 09:41:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/01 17:24:22 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/03 13:45:41 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,8 @@ while (i < pipex.nb_cmd)
 			return (perror("minishell: pipe"), heredoc_cleanup(main), 1);
 		}
 	}
+	signal(SIGINT, cntrlC_child);
+	signal(SIGQUIT, cntrlslash);
 	pipex.pid = fork();
 	if (pipex.pid < 0)
 	{
@@ -91,7 +93,7 @@ while (i < pipex.nb_cmd)
 		}
 		if (handle_redir(current))
 			cleanup_exit_process(pipex.pipe_fd, pipex.prev_fd, diff, 1);
-		if (!current->is_builtin)
+		if (!current->is_builtin && current->cmd[0])
 		{
 			path = command_founder(current->cmd, shell->env);
 			new_env=env_convertor(shell->env);
@@ -99,11 +101,13 @@ while (i < pipex.nb_cmd)
 			perror("minishell: execve");
 			exit(1);
 		}
-		else
+		else if (current->is_builtin && current->cmd[0])
 		{
 			status = run_builtins(current, shell);
 				exit(status);
 		}
+		puts("after builtin");
+	exit(0);
 	}
 	else
 	{

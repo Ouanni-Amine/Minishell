@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 17:14:45 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/01 17:22:52 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/04 14:23:24 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ int	redirect_output(t_file *current)
 {
 	int	fd;
 	int	flag;
-
 	flag = O_CREAT | O_WRONLY;
 	if (current->token == 3)
 		flag |= O_TRUNC;

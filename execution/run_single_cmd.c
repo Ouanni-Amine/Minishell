@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:23:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/01 17:24:50 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/02 20:51:48 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,8 @@ int	handle_builtins(t_main *main, t_shell *shell)
 	}
 	if (handle_redir(main))
 		return(handle_dup(stdin_cpy, stdout_cpy), 1);
-	status = run_builtins(main, shell);
+	if (main->cmd[0])
+		status = run_builtins(main, shell);
 	if (handle_dup(stdin_cpy, stdout_cpy))
 		status = 1;
 	return (status);
@@ -89,11 +90,13 @@ int	run_single_cmd(t_main *main, t_shell *shell)
 
 	if (handle_redir_heredoc(main, shell->env))
 		return (heredoc_cleanup(main), 1);//TODO modifie here_doc to be written in fork for signal issue
-	if (main->is_builtin)
+	if (main->is_builtin || (!main->cmd[0] && main->redir))
 	{
 		status = handle_builtins(main, shell);
 		return (heredoc_cleanup(main), status);
 	}
+	signal(SIGINT, cntrlC_child);//NOTE: this is to handle cntrC since i must not prompt teh user other line or i will got 2 mimihsell lines !!
+	signal(SIGQUIT, cntrlslash);//NOTE: this is since the segquit is to be ignored but when we will run a child the parent must print somthing
 	pid = fork();
 	if (pid < 0)
 		return (perror("minishell: fork"), heredoc_cleanup(main), 1);

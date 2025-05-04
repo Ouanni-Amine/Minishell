@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 10:32:13 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/26 21:07:13 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/03 22:05:45 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,19 @@
 
 void	echo_print(char **cmd, int i, int new_line)
 {
+	char	*res;
+
+	res = NULL;
 	while (cmd[i])
 	{
-		ft_putstr_fd(cmd[i], 1);
+		res = ft_strjoin(res, cmd[i]);
 		if (cmd[i + 1])
-			ft_putstr_fd(" ", 1);
+			res = ft_strjoin(res, " ");
 		i++;
 	}
 	if (new_line)
-		ft_putstr_fd("\n", 1);
+		res = ft_strjoin(res, "\n");
+	ft_putstr_fd(res, 1);
 }
 
 int	ft_echo(char **cmd)

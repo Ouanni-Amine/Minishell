@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
+/*   set_last_status.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/18 17:05:09 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/03 22:10:52 by aouanni          ###   ########.fr       */
+/*   Created: 2025/05/02 19:26:54 by aouanni           #+#    #+#             */
+/*   Updated: 2025/05/02 19:30:46 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parse/minishell.h"
 
-void	ft_putstr_fd(char *s, int fd)
+void	set_last_status(int *last_status, int code)
 {
-	int	i;
+	static int *status;
 
-	i = 0;
-	if (!s)
-		return ;
-	write(1, s, ft_strlen(s));
+	if (last_status)
+		status = last_status;
+	else
+		*status = code;
 }
