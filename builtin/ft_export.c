@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 21:02:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/01 14:04:57 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/10 10:53:54 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	ft_export(t_env **env, char **cmd)
 	{
 		if (!ft_strchr(cmd[i], '='))
 		{
-			if (!is_valide(cmd[i]))
+			if (!is_valide(cmd[i]) || cmd[i][0] == '\0')
 			{
 				error("minishell: export: `", cmd[i],
 					"': not a valid identifier", NULL);

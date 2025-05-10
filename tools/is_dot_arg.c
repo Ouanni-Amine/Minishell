@@ -1,23 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   set_last_status.c                                  :+:      :+:    :+:   */
+/*   is_dot_arg.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/02 19:26:54 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/06 12:12:40 by aouanni          ###   ########.fr       */
+/*   Created: 2025/05/09 15:27:25 by aouanni           #+#    #+#             */
+/*   Updated: 2025/05/09 15:27:38 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parse/minishell.h"
 
-void	set_last_status(int *last_status, int code)
+int	is_dot_arg(char *arg)
 {
-	static int	*status;
-
-	if (last_status)
-		status = last_status;
-	else
-		*status = code;
+	if (!arg)
+		return (0);
+	if (strcmp(arg, "..") == 0)
+		return (1);
+	if (strcmp(arg, ".") == 0)
+		return (1);
+	if (strcmp(arg, "../") == 0)
+		return (1);
+	if (strcmp(arg, "./") == 0)
+		return (1);
+	return (0);
 }

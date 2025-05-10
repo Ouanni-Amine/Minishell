@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:48:10 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/03 15:18:32 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/10 11:02:58 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	heredoc_cleanup(t_main *main)
 	}
 }
 
-int	fill_tempfile(int input_fd, char *limiter, t_file *current, t_env *env)
+int	fill_tempfile(int input_fd, char *limiter, int expand, t_env *env)
 {
 	char	*line;
 	char	*new_line;
@@ -69,7 +69,7 @@ int	fill_tempfile(int input_fd, char *limiter, t_file *current, t_env *env)
 			break ;
 		if (!ft_strcmp(line, limiter))
 			break ;
-		if (current->expand && line[0] == '$')
+		if (expand && line[0] == '$')//note: this expand is not good u must use the parser expand function!!!!
 		{
 			new_line = ft_strjoin(get_env_value(env, line + 1), "\0");
 			new_line = ft_strjoin(new_line, "\n");
@@ -80,31 +80,57 @@ int	fill_tempfile(int input_fd, char *limiter, t_file *current, t_env *env)
 		if (write(input_fd, new_line, env_strlen(new_line, '\0')) < 0)
 			return (perror("minishell: write"), -1);
 	}
-	return (close(input_fd), 1);
+	return (1);
+}
+
+int	prepare_heredoc_files(int fd[2])
+{
+	int		count;
+	char	*res;
+
+	count = 0;
+	while (1)
+	{
+		res = ft_itoa(count);
+		res = ft_strjoin("/tmp/heredoc_", res);
+		if (access(res, F_OK))
+			break ;
+		count++;
+	}
+	fd[0] = open(res, O_CREAT | O_WRONLY, 0644);
+	if (fd[0] < 0)
+		return (-1);
+	fd[1] = open(res, O_RDONLY);
+	if (fd[1] < 0)
+		return (close(fd[0]), -1);
+	if (unlink(res) == -1)
+		return (close(fd[0]), close(fd[1]), perror("minishell: unlink"), -1);
+	return (1);
 }
 
 int	heredoc_inputfd(t_file *current, t_env *env)
 {
-	int		input_fd;
-	char	*limiter;
+	int		fd[2];
+	pid_t	pid;
+	int		status;
 
-	limiter = current->file;
-	unlink("temp.txt");
-	input_fd = open("temp.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (input_fd < 0)
+	if (prepare_heredoc_files(fd) == -1)
+		return (-1);
+	pid = fork();
+	if (pid < 0)
+		return (close(fd[0]), close(fd[1]), perror("minishell: fork"), -1);
+	signal(SIGINT, SIG_IGN);
+	if (pid == 0)
 	{
-		error("minishell: temp.txt: ", strerror(errno), 0, 0);
-		perror("minishell: open");
-		return (-1);
+		signal(SIGINT, heredoc_cntrlc);
+		if (fill_tempfile(fd[0], current->file, current->expand, env) == -1)
+			exit(1);
+		exit(0);
 	}
-	if (fill_tempfile(input_fd, limiter, current, env) == -1)
-		return (-1);
-	input_fd = open("temp.txt", O_RDONLY);
-	if (input_fd < 0)
-	{
-		error("minishell: temp.txt: ", strerror(errno), 0, 0);
-		return (-1);
-	}
-	unlink("temp.txt");
-	return (input_fd);
+	waitpid(pid, &status, 0);
+	close(fd[0]);
+	signal(SIGINT, cntrlc);
+	if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
+		return (close(fd[1]), -1);
+	return (fd[1]);
 }

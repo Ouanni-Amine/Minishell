@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 17:14:45 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/04 14:23:24 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/06 12:14:01 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int	redirect_output(t_file *current)
 {
 	int	fd;
 	int	flag;
+
 	flag = O_CREAT | O_WRONLY;
 	if (current->token == 3)
 		flag |= O_TRUNC;
@@ -67,11 +68,11 @@ int	handle_redir(t_main *main)
 	current = main->redir;
 	while (current)
 	{
-		if (current->ambiguous)
-		{
-			error("minishell: ", current->file, ": ambiguous redirect", 0);
-			return (1);
-		}
+		// if (current->ambiguous)
+		// {
+		// 	error("minishell: ", current->file, ": ambiguous redirect", 0);
+		// 	return (1);
+		// }
 		if (current->token == 2 || current->token == 5)
 		{
 			if (redirect_input(current))

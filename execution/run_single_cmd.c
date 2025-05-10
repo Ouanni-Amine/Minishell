@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:23:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/02 20:51:48 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/09 20:05:59 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ int	run_builtins(t_main *main, t_shell *shell)
 	if (!strcmp("echo", main->cmd[0]))
 		res = ft_echo(main->cmd);
 	else if (!strcmp("cd", main->cmd[0]))
-		res = ft_cd(main->cmd, &shell->env);
+		res = ft_cd(main->cmd, shell);
 	else if (!strcmp("pwd", main->cmd[0]))
-		res = ft_pwd();
+		res = ft_pwd(shell);
 	else if (!strcmp("unset", main->cmd[0]))
 		res = ft_unset(&shell->env, main->cmd);
 	else if (!strcmp("env", main->cmd[0]))
@@ -29,7 +29,7 @@ int	run_builtins(t_main *main, t_shell *shell)
 	else if (!strcmp("export", main->cmd[0]))
 		res = ft_export(&shell->env, main->cmd);
 	else if (!strcmp("exit", main->cmd[0]))
-		res = ft_exit(main->cmd, shell->last_status);
+		res = ft_exit(main->cmd, shell);
 	return (res);
 }
 
@@ -73,7 +73,7 @@ int	handle_builtins(t_main *main, t_shell *shell)
 		return (1);
 	}
 	if (handle_redir(main))
-		return(handle_dup(stdin_cpy, stdout_cpy), 1);
+		return (handle_dup(stdin_cpy, stdout_cpy), 1);
 	if (main->cmd[0])
 		status = run_builtins(main, shell);
 	if (handle_dup(stdin_cpy, stdout_cpy))
@@ -81,35 +81,38 @@ int	handle_builtins(t_main *main, t_shell *shell)
 	return (status);
 }
 
+int	run_signle_external(t_main *main, t_shell *shell)
+{
+	char	*path;
+	char	**new_env;
+
+	if (main->redir && handle_redir(main))
+		exit(1);
+	path = command_founder(main->cmd, shell->env);
+	new_env = env_convertor(shell->env);
+	execve(path, main->cmd, new_env);
+	perror("minishell: execve");
+	exit(1);
+}
+
 int	run_single_cmd(t_main *main, t_shell *shell)
 {
 	pid_t	pid;
-	char	*path;
 	int		status;
-	char	**new_env;
 
 	if (handle_redir_heredoc(main, shell->env))
-		return (heredoc_cleanup(main), 1);//TODO modifie here_doc to be written in fork for signal issue
+		return (heredoc_cleanup(main), 1);
 	if (main->is_builtin || (!main->cmd[0] && main->redir))
 	{
 		status = handle_builtins(main, shell);
 		return (heredoc_cleanup(main), status);
 	}
-	signal(SIGINT, cntrlC_child);//NOTE: this is to handle cntrC since i must not prompt teh user other line or i will got 2 mimihsell lines !!
-	signal(SIGQUIT, cntrlslash);//NOTE: this is since the segquit is to be ignored but when we will run a child the parent must print somthing
 	pid = fork();
 	if (pid < 0)
 		return (perror("minishell: fork"), heredoc_cleanup(main), 1);
+	signal_part(main);
 	if (pid == 0)
-	{
-		if (main->redir && handle_redir(main))
-			exit(1);
-		path = command_founder(main->cmd, shell->env);
-		new_env = env_convertor(shell->env);
-		execve(path, main->cmd, new_env);
-		perror("minishell: execve");
-		exit(1);
-	}
+		run_signle_external(main, shell);
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 		status = WEXITSTATUS(status);

@@ -1,23 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   set_last_status.c                                  :+:      :+:    :+:   */
+/*   signal_part.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/02 19:26:54 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/06 12:12:40 by aouanni          ###   ########.fr       */
+/*   Created: 2025/05/09 20:12:34 by aouanni           #+#    #+#             */
+/*   Updated: 2025/05/09 20:23:42 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parse/minishell.h"
 
-void	set_last_status(int *last_status, int code)
+void	signal_part(t_main *main)
 {
-	static int	*status;
-
-	if (last_status)
-		status = last_status;
+	if (strnstr(main->cmd[0], "./", 2) && !strcmp(main->cmd[0] + 2, "a.out"))//note: this must be minishell!!
+	{
+		signal(SIGINT, cntrlc_specifique);
+		signal(SIGQUIT, SIG_IGN);
+	}
+	else if (!strnstr(main->cmd[0], "./", 2) && !strcmp(main->cmd[0], "a.out"))
+	{
+		signal(SIGINT, cntrlc_specifique);
+		signal(SIGQUIT, SIG_IGN);
+	}
 	else
-		*status = code;
+	{
+		signal(SIGINT, cntrlc_child);
+		signal(SIGQUIT, cntrlslash);
+	}
 }

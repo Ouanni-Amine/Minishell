@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:23:52 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/26 21:08:59 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/10 11:30:29 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	my_exit(int status)
 	t_env	*next;
 
 	ft_free(NULL, 1);
-	shell = get_shell(NULL);
+	shell = get_shell(NULL, 2);
 	env = shell->env;
 	while (env)
 	{
@@ -55,7 +55,10 @@ void	my_exit(int status)
 		free(env);
 		env = next;
 	}
+	if (shell->pwd_emergcy)
+		free(shell->pwd_emergcy);
 	free(shell);
+	get_shell(NULL, 0);
 	exit(status);
 }
 
