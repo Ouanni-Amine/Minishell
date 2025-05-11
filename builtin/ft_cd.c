@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 13:00:55 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/09 20:20:56 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/11 16:03:26 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	cd_to_dir(t_shell *shell, char *dir, char *oldpwd, int free_oldpwd)
 {
 	if (chdir(dir) == -1)
 	{
-		error("minishell: cd: ", dir, ": ", "No such file or directory");
+		error("minishell: cd: ", dir, ": ", "No such file or directory");// cmd [0] export cmd[1] '\0'
 		if (free_oldpwd)
 			free(oldpwd);
 		return (1);

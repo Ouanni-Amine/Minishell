@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 17:07:58 by aouanni           #+#    #+#             */
-/*   Updated: 2025/04/26 21:07:53 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/10 13:08:29 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	**env_convertor(t_env *env)
 
 	i = 0;
 	len = get_lenght(env);
-	res = ft_malloc((sizeof(char *) * len) + 1);
+	res = ft_malloc((sizeof(char *) * (len + 1)));
 	res[len] = NULL;
 	while (i < len)
 	{

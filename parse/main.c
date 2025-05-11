@@ -93,6 +93,7 @@ int main(int ac, char **av, char **env)
 			shell->last_status =  run_multi_cmd(*head, shell);
 		}
 		tcsetattr(STDIN_FILENO, TCSANOW, &term);//NOTE: i restore them
+		printf("last status is ==> %d\n", shell->last_status);
 		my_clean();
 	}
 }

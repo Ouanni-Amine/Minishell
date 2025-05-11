@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 21:02:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/10 10:53:54 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/11 20:44:27 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,20 +57,18 @@ void	ft_export_func(char *cmd, t_env **env, char *res, int *status)
 	char	*key;
 	char	*add;
 
-	if (*(res - 1) == '+')
+	if (res > cmd && *(res - 1) == '+')
 		key = ft_strdup(cmd, '+');
 	else
 		key = ft_strdup(cmd, '=');
-	if (!key[0] || !is_valide(key) || *(res - 2) == '+')
+	if (!key[0] || !is_valide(key) || (res - cmd >= 2 && *(res - 2) == '+'))
 	{
 		error("minishell: export: `", cmd, "': not a valid identifier", NULL);
 		*status = 1;
 	}
-	if (*(res - 1) == '+')
+	if (res > cmd && *(res - 1) == '+')
 	{
 		add = ft_strjoin(get_env_value(*env, key), ft_strchr(cmd, '=') + 1);
-		if (!add)
-			add = "";
 		set_env_value(env, key, add, 1);
 	}
 	else

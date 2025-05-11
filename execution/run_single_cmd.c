@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:23:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/09 20:05:59 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/10 13:20:04 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ int	run_single_cmd(t_main *main, t_shell *shell)
 	if (pid < 0)
 		return (perror("minishell: fork"), heredoc_cleanup(main), 1);
 	signal_part(main);
-	if (pid == 0)
+	if (pid == 0)  
 		run_signle_external(main, shell);
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
