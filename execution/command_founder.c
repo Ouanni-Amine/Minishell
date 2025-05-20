@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:46:23 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/01 17:15:27 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/19 20:20:12 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,14 @@
 
 void	exit_with_error(int flag, char *cmd)
 {
-	if (flag == 1 || flag == 2)
+	if (flag == 1 || flag == 2 || flag == 5)
 	{
 		if (flag == 1)
 			error("minishell: ", cmd, ": is a directory", NULL);
-		else
+		else if (flag == 2)
 			error("minishell: ", cmd, ": Permission denied", NULL);
+		else
+			error("minishell: ", cmd, ": Not a directory", NULL);
 		exit(126);
 	}
 	else
@@ -39,8 +41,14 @@ void	check_file_acces(char *cmd)
 	fd = open(cmd, O_DIRECTORY);
 	if (fd != -1)
 		exit_with_error(1, cmd);
+
 	if (access (cmd, F_OK) != 0)
-		exit_with_error(3, cmd);
+	{
+		if (errno == 2)
+			exit_with_error(3, cmd);
+		else if (errno == 20)
+			exit_with_error(5, cmd);
+	}
 	if (access(cmd, X_OK) != 0)
 		exit_with_error(2, cmd);
 }

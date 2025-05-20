@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:48:10 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/10 11:02:58 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/12 11:44:23 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	fill_tempfile(int input_fd, char *limiter, int expand, t_env *env)
 			break ;
 		if (!ft_strcmp(line, limiter))
 			break ;
-		if (expand && line[0] == '$')//note: this expand is not good u must use the parser expand function!!!!
+		if (expand && line[0] == '$') //note: this expand is not good u must use the parser expand function!!!!
 		{
 			new_line = ft_strjoin(get_env_value(env, line + 1), "\0");
 			new_line = ft_strjoin(new_line, "\n");

@@ -1,28 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   is_dot_arg.c                                       :+:      :+:    :+:   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/09 15:27:25 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/09 15:27:38 by aouanni          ###   ########.fr       */
+/*   Created: 2025/05/17 17:12:45 by aouanni           #+#    #+#             */
+/*   Updated: 2025/05/17 17:12:59 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parse/minishell.h"
 
-int	is_dot_arg(char *arg)
+void	*ft_memset(void *b, int c, size_t len)
 {
-	if (!arg)
-		return (0);
-	if (strcmp(arg, "..") == 0)
-		return (1);
-	if (strcmp(arg, ".") == 0)
-		return (1);
-	if (strcmp(arg, "../") == 0)
-		return (1);
-	if (strcmp(arg, "./") == 0)
-		return (1);
-	return (0);
+	size_t			i;
+	unsigned char	*p;
+
+	p = (unsigned char *)b;
+	i = 0;
+	while (i < len)
+	{
+		p[i] = (unsigned char)c;
+		i++;
+	}
+	return (b);
 }

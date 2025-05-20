@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:23:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/10 13:20:04 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/16 12:12:43 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int	handle_builtins(t_main *main, t_shell *shell)
 	return (status);
 }
 
-int	run_signle_external(t_main *main, t_shell *shell)
+int	run_single_external(t_main *main, t_shell *shell)
 {
 	char	*path;
 	char	**new_env;
@@ -91,6 +91,7 @@ int	run_signle_external(t_main *main, t_shell *shell)
 	path = command_founder(main->cmd, shell->env);
 	new_env = env_convertor(shell->env);
 	execve(path, main->cmd, new_env);
+	// if(errno != ENOEXEC)//NOTE: any error except the execformat show it
 	perror("minishell: execve");
 	exit(1);
 }
@@ -107,12 +108,12 @@ int	run_single_cmd(t_main *main, t_shell *shell)
 		status = handle_builtins(main, shell);
 		return (heredoc_cleanup(main), status);
 	}
+	signal_part(main);
 	pid = fork();
 	if (pid < 0)
 		return (perror("minishell: fork"), heredoc_cleanup(main), 1);
-	signal_part(main);
-	if (pid == 0)  
-		run_signle_external(main, shell);
+	if (pid == 0)
+		run_single_external(main, shell);
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 		status = WEXITSTATUS(status);

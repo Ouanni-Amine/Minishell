@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 21:02:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/11 20:44:27 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/18 20:25:31 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int	ft_export(t_env **env, char **cmd)
 					"': not a valid identifier", NULL);
 				status = 1;
 			}
-			if (!get_env_value(*env, cmd[i]))
+			else if (!get_env_value(*env, cmd[i]))
 				set_env_value(env, cmd[i], "", 0);
 		}
 		else

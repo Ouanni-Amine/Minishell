@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 17:06:29 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/01 17:16:08 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/19 13:55:44 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,8 @@ void	shellvl(char *key, char *env, t_env **head)
 	free(val);
 }
 
-void	env_inherited(t_env	**head, char **env)
+void	env_inherited(t_env	**head, char **env, char *key, char *val)
 {
-	char	*key;
-	char	*val;
-
 	while (*env)
 	{
 		key = env_strdup(*env, '=');
@@ -84,6 +81,11 @@ void	env_inherited(t_env	**head, char **env)
 		if (ft_strcmp(key, "OLDPWD") && ft_strcmp(key, "SHLVL"))
 		{
 			val = env_strdup(ft_strchr(*env, '=') + 1, '\0');
+			if (!val)
+			{
+				free(key);
+				my_exit(1);
+			}
 			env_add_back(head, create_env_node(key, val, 1));
 			free(val);
 		}
@@ -99,6 +101,8 @@ void	env_inherited(t_env	**head, char **env)
 void	extract_env(t_env **head, char **env)
 {
 	char	*dir;
+	char	*key;
+	char	*val;
 
 	if (!*env)
 	{
@@ -110,6 +114,6 @@ void	extract_env(t_env **head, char **env)
 		free(dir);
 	}
 	else
-		env_inherited(head, env);
+		env_inherited(head, env, key, val);
 	env_add_back(head, create_env_node("OLDPWD", "", 0));
 }

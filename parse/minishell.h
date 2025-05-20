@@ -59,10 +59,11 @@ typedef struct s_env
 
 typedef	struct	s_shell
 {
-	t_env	*env;
-	int		last_status; // 258
-	int		is_pipe;
-	char	*pwd_emergcy;
+	t_env			*env;
+	int				last_status; // 258
+	int				is_pipe;
+	char			*pwd_emergcy;
+	struct termios	term;
 }	t_shell;
 
 typedef struct s_pipex
@@ -157,7 +158,7 @@ void	childs_process(t_pipex *pipex, t_main *main, t_shell *shell, int i);
 void	parent_process(t_pipex *pipex, t_main **main, int i);
 int		parent_exit(t_pipex *pipex, t_main *main);
 void	cleanup_exit_process(int *pipe_fd, int prev_fd, int is_pipe, int code);
-int		is_dot_arg(char *arg);
 void	cntrlc_specifique(int signal);
 void	signal_part(t_main *main);
+void	*ft_memset(void *b, int c, size_t len);
 #endif

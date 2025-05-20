@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 13:00:55 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/11 16:03:26 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/19 13:25:35 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,31 +59,13 @@ int	cd_to_home(t_shell *shell, char *oldpwd, int free_oldpwd)
 	return (update_env_vars(shell, oldpwd, free_oldpwd));
 }
 
-int	cd_to_dir(t_shell *shell, char *dir, char *oldpwd, int free_oldpwd)
-{
-	if (chdir(dir) == -1)
-	{
-		error("minishell: cd: ", dir, ": ", "No such file or directory");// cmd [0] export cmd[1] '\0'
-		if (free_oldpwd)
-			free(oldpwd);
-		return (1);
-	}
-	return (update_env_vars(shell, oldpwd, free_oldpwd));
-}
-
-int	handle_dot_path_deleted(t_shell *shell, char *arg)
+int	special_case(t_shell *shell, char *arg)
 {
 	char	*pwd;
 	char	*res;
 
-	pwd = ft_strdup(shell->pwd_emergcy, '\0');
-	if (pwd[ft_strlen(pwd) - 1] != '/')
-		pwd = ft_strjoin(pwd, "/");
-	pwd = ft_strjoin(pwd, arg);
-	if (chdir(arg) == -1)
-		return (error("minishell: cd: ", arg, ": ", strerror(errno)), 1);
 	set_env_value(&shell->env, "OLDPWD", shell->pwd_emergcy, 1);
-	res = getcwd(NULL, 0);
+	res = getcwd(NULL, 0);//NOTE: this check is to know if i am in a valide path after chnage the directory
 	if (res)
 	{
 		set_env_value(&shell->env, "PWD", res, 1);
@@ -91,6 +73,10 @@ int	handle_dot_path_deleted(t_shell *shell, char *arg)
 		shell->pwd_emergcy = env_strdup(res, '\0');
 		return (free(res), 0);
 	}
+	pwd = ft_strdup(shell->pwd_emergcy, '\0');
+	if (pwd[ft_strlen(pwd) - 1] != '/')
+		pwd = ft_strjoin(pwd, "/");
+	pwd = ft_strjoin(pwd, arg);
 	set_env_value(&shell->env, "PWD", pwd, 1);
 	free(shell->pwd_emergcy);
 	shell->pwd_emergcy = env_strdup(pwd, '\0');
@@ -98,6 +84,20 @@ int	handle_dot_path_deleted(t_shell *shell, char *arg)
 		" cannot access parent directories: No such file or directory",
 		NULL, NULL);
 	return (1);
+}
+
+int	cd_to_dir(t_shell *shell, char *dir, char *oldpwd, int free_oldpwd)
+{
+	if (chdir(dir) == -1)
+	{
+		error("minishell: cd: ", dir, ": ", "No such file or directory");
+		if (free_oldpwd)
+			free(oldpwd);
+		return (1);
+	}
+	if (free_oldpwd)
+		return (update_env_vars(shell, oldpwd, free_oldpwd));
+	return(special_case(shell, dir));
 }
 
 int	ft_cd(char **cmd, t_shell *shell)
@@ -113,12 +113,7 @@ int	ft_cd(char **cmd, t_shell *shell)
 			return (cd_to_home(shell, oldpwd, 1));
 		return (cd_to_home(shell, shell->pwd_emergcy, 0));
 	}
-	else if (!dir_exists && is_dot_arg(cmd[1]))
-		return (handle_dot_path_deleted(shell, cmd[1]));
-	else
-	{
-		if (dir_exists)
-			return (cd_to_dir(shell, cmd[1], oldpwd, 1));
-		return (cd_to_dir(shell, cmd[1], shell->pwd_emergcy, 0));
-	}
+	if (dir_exists)
+		return (cd_to_dir(shell, cmd[1], oldpwd, 1));
+	return (cd_to_dir(shell, cmd[1], shell->pwd_emergcy, 0));
 }

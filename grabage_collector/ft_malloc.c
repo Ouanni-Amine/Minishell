@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:23:52 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/10 11:30:29 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/17 17:51:09 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void	my_exit(int status)
 	t_env	*env;
 	t_env	*next;
 
+	rl_clear_history();
 	ft_free(NULL, 1);
 	shell = get_shell(NULL, 2);
 	env = shell->env;

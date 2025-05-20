@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 17:14:45 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/06 12:14:01 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/18 14:36:17 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	handle_redir(t_main *main)
 	current = main->redir;
 	while (current)
 	{
-		// if (current->ambiguous)
+		// if (current->ambiguous)//NOTE: uncomment me
 		// {
 		// 	error("minishell: ", current->file, ": ambiguous redirect", 0);
 		// 	return (1);

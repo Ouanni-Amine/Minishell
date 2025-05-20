@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 16:09:06 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/10 10:57:02 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/18 21:27:11 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@ int	ft_unset(t_env **head, char **cmd)
 				NULL);
 			status = 1;
 		}
-		ft_unset2(current, prev, cmd[i], head);
+		else
+			ft_unset2(current, prev, cmd[i], head);
 		i++;
 	}
 	return (0);
