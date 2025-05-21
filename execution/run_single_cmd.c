@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:23:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/16 12:12:43 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/21 18:23:20 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,9 @@ int	run_single_cmd(t_main *main, t_shell *shell)
 	pid_t	pid;
 	int		status;
 
-	if (handle_redir_heredoc(main, shell->env))
-		return (heredoc_cleanup(main), 1);
+	status = handle_redir_heredoc(main, shell->env);
+	if (status)
+		return (heredoc_cleanup(main), status);
 	if (main->is_builtin || (!main->cmd[0] && main->redir))
 	{
 		status = handle_builtins(main, shell);

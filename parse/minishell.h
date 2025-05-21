@@ -162,4 +162,5 @@ void	cntrlc_specifique(int signal);
 void	signal_part(t_main *main);
 void	*ft_memset(void *b, int c, size_t len);
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
+int		here_doc_count(t_main *main);
 #endif

@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 09:41:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/12 11:24:18 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/21 18:24:44 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,12 @@ int	run_multi_cmd(t_main *main, t_shell *shell)
 {
 	t_pipex	pipex;
 	t_main	*current;
+	int		status;
 
 	current = main;
-	if (handle_redir_heredoc(main, shell->env))
-		return (heredoc_cleanup(main), 1);
+	status = handle_redir_heredoc(main, shell->env);
+	if (status)
+		return (heredoc_cleanup(main), status);
 	pipex.prev_fd = STDIN_FILENO;
 	pipex.nb_cmd = 0;
 	while (current)
