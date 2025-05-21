@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 17:06:29 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/19 13:55:44 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/21 12:38:01 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,12 +98,14 @@ void	env_inherited(t_env	**head, char **env, char *key, char *val)
 	}
 }
 
-void	extract_env(t_env **head, char **env)
+void	extract_env(t_shell *shell, char **env)
 {
 	char	*dir;
 	char	*key;
 	char	*val;
+	t_env	**head;
 
+	head = &shell->env;
 	if (!*env)
 	{
 		dir = getcwd(NULL, 0);
@@ -116,4 +118,5 @@ void	extract_env(t_env **head, char **env)
 	else
 		env_inherited(head, env, key, val);
 	env_add_back(head, create_env_node("OLDPWD", "", 0));
+	shell->pwd_emergcy = env_strdup(get_env_value(*head, "PWD"), '\0');
 }

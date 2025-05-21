@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 17:05:09 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/03 22:10:52 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/21 15:57:11 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,5 +19,5 @@ void	ft_putstr_fd(char *s, int fd)
 	i = 0;
 	if (!s)
 		return ;
-	write(1, s, ft_strlen(s));
+	write(fd, s, ft_strlen(s));
 }

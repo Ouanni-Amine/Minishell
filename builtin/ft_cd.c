@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 13:00:55 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/19 13:25:35 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/21 15:48:49 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,8 @@ int	special_case(t_shell *shell, char *arg)
 	free(shell->pwd_emergcy);
 	shell->pwd_emergcy = env_strdup(pwd, '\0');
 	error("minishell: cd: error retrieving current directory: getcwd:",
-		" cannot access parent directories: No such file or directory",
-		NULL, NULL);
+		" cannot access parent directories: ",
+		strerror(errno), NULL);
 	return (1);
 }
 
@@ -90,14 +90,14 @@ int	cd_to_dir(t_shell *shell, char *dir, char *oldpwd, int free_oldpwd)
 {
 	if (chdir(dir) == -1)
 	{
-		error("minishell: cd: ", dir, ": ", "No such file or directory");
+		error("minishell: cd: ", dir, ": ", strerror(errno));
 		if (free_oldpwd)
 			free(oldpwd);
 		return (1);
 	}
 	if (free_oldpwd)
 		return (update_env_vars(shell, oldpwd, free_oldpwd));
-	return(special_case(shell, dir));
+	return (special_case(shell, dir));
 }
 
 int	ft_cd(char **cmd, t_shell *shell)

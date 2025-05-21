@@ -23,7 +23,7 @@ void	prepare_requirements(t_shell *shell, char **env)
 {
 	tcgetattr(STDIN_FILENO, &shell->term);
 	get_shell(shell, 1);
-	extract_env(&shell->env, env);
+	extract_env(shell, env);
 	set_last_status(&shell->last_status, 0);
 	rl_catch_signals = 0;
 }
@@ -34,6 +34,8 @@ int main(int ac, char **av, char **env)
 	t_main	**head;
 	char	*str;
 
+	(void)ac;
+	(void)av;
 	if (valide_requirements())
 		return (1);
 	t_shell *shell = malloc(sizeof(t_shell));

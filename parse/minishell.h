@@ -130,7 +130,7 @@ int		heredoc_inputfd(t_file *current, t_env *env);
 char	*command_founder(char **cmd_args, t_env *env);
 int		run_single_cmd(t_main *main, t_shell *shell);
 int		run_builtins(t_main *main, t_shell *shell);
-void	extract_env(t_env **head, char **env);
+void	extract_env(t_shell *shell, char **env);
 int		is_valide(char *str);
 int		ft_export(t_env **env, char **cmd);
 char	**env_convertor(t_env *env);
@@ -161,4 +161,5 @@ void	cleanup_exit_process(int *pipe_fd, int prev_fd, int is_pipe, int code);
 void	cntrlc_specifique(int signal);
 void	signal_part(t_main *main);
 void	*ft_memset(void *b, int c, size_t len);
+char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
 #endif

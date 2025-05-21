@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:46:23 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/19 20:20:12 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/21 11:52:23 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,10 @@ void	check_file_acces(char *cmd)
 
 	fd = open(cmd, O_DIRECTORY);
 	if (fd != -1)
+	{
+		close(fd);
 		exit_with_error(1, cmd);
-
+	}
 	if (access (cmd, F_OK) != 0)
 	{
 		if (errno == 2)
