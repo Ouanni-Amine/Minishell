@@ -60,6 +60,7 @@ int main(int ac, char **av, char **env)
 			ft_putstr_fd("exit\n", 1);
 			my_exit(shell->last_status);
 		}
+		ft_free(str, 0);
 		add_history(str);
 		lexer(str, head_lex);
 		ft_check_str(head_lex);
@@ -68,7 +69,10 @@ int main(int ac, char **av, char **env)
 		ft_parsing(head_lex, head);
 		signal(SIGINT, cntrlc);
 		if (!*head)//NOTE: i added this cause i got a segfault when i did tab and enter
+		{
+			my_clean();
 			continue ;
+		}
 		 if (!(*head)->next)
 			shell->last_status =  run_single_cmd(*head, shell);
 		else
