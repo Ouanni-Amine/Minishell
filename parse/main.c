@@ -65,10 +65,10 @@ int main(int ac, char **av, char **env)
 		lexer(str, head_lex);
 		ft_check_str(head_lex);
 		ft_check_syntax_error(*head_lex);
-		signal(SIGINT, SIG_IGN);//note :in case the paring will take long time;
+		signal(SIGINT, SIG_IGN);
 		ft_parsing(head_lex, head);
 		signal(SIGINT, cntrlc);
-		if (!*head)//NOTE: i added this cause i got a segfault when i did tab and enter
+		if (!*head)
 		{
 			my_clean();
 			continue ;
@@ -80,7 +80,7 @@ int main(int ac, char **av, char **env)
 			shell->is_pipe = 1;
 			shell->last_status =  run_multi_cmd(*head, shell);
 		}
-		tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);//NOTE: i restore them
+		tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
 		printf("exit status: %d\n", shell->last_status);
 		my_clean();
 	}

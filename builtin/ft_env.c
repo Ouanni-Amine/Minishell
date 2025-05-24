@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 15:38:27 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/19 13:09:19 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/24 14:45:54 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	ft_env(char **cmd, t_env *env)
 		}
 		env = env->next;
 	}
-	if (str)//NOTE: cause if he removed all env null well got printed so this line added
+	if (str)
 		printf("%s", str);
 	return (0);
 }

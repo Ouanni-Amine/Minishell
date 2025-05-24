@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 20:12:34 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/21 15:56:26 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/24 14:40:16 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	signal_part(t_main *main)
 	char	*cmd;
 
 	cmd = main->cmd[0];
-	if (ft_strnstr(cmd, "a.out", ft_strlen(cmd))
+	if (ft_strnstr(cmd, "minishell", ft_strlen(cmd))
 		|| ft_strnstr(cmd, "python", ft_strlen(cmd)))
 	{
 		signal(SIGINT, cntrlc_specifique);

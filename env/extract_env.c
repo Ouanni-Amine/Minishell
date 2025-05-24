@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 17:06:29 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/22 11:41:44 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/24 14:35:57 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,8 @@ void	extract_env(t_shell *shell, char **env)
 	char	*val;
 	t_env	**head;
 
+	key = NULL;
+	val = NULL;
 	head = &shell->env;
 	if (!*env)
 	{

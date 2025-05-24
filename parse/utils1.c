@@ -271,7 +271,6 @@ char *ft_make_str_with_org_space(char *str)
 
 char *ft_make_space(char *str)
 {
-	size_t i = 0;
 	char *old_str = ft_make_str_with_org_space(str);
 	char *new_str = ft_make_str_with_space(old_str);
 	// printf ("%s\n",new_str);

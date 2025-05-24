@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:47:59 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/19 15:54:32 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/24 14:45:31 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void	childs_process(t_pipex *pipex, t_main *main, t_shell *shell, int i)
 		path = command_founder(main->cmd, shell->env);
 		new_env = env_convertor(shell->env);
 		execve(path, main->cmd, new_env);
-		// if(errno != ENOEXEC)//NOTE: any error except the execformat show it
 		perror("minishell: execve");
 		exit(1);
 	}

@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:23:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/21 18:23:20 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/24 14:45:25 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ int	run_builtins(t_main *main, t_shell *shell)
 {
 	int	res;
 
+	res = 0;
 	if (!strcmp("echo", main->cmd[0]))
 		res = ft_echo(main->cmd);
 	else if (!strcmp("cd", main->cmd[0]))
@@ -91,7 +92,6 @@ int	run_single_external(t_main *main, t_shell *shell)
 	path = command_founder(main->cmd, shell->env);
 	new_env = env_convertor(shell->env);
 	execve(path, main->cmd, new_env);
-	// if(errno != ENOEXEC)//NOTE: any error except the execformat show it
 	perror("minishell: execve");
 	exit(1);
 }

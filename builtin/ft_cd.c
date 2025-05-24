@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 13:00:55 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/22 11:25:40 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/24 14:45:48 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	special_case(t_shell *shell, char *arg)
 	char	*res;
 
 	set_env_value(&shell->env, "OLDPWD", shell->pwd_emergcy, 1);
-	res = getcwd(NULL, 0);//NOTE: this check is to know if i am in a valide path after chnage the directory
+	res = getcwd(NULL, 0);
 	if (res)
 	{
 		set_env_value(&shell->env, "PWD", res, 1);

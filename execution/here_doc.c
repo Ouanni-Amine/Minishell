@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:48:10 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/21 18:00:49 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/24 14:46:27 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int	prepare_heredoc_files(int fd[2])
 	count = 0;
 	while (1)
 	{
-		res = ft_itoa(count);//NOTE: if itoa allocation failed in 3rd call and u aledy created 2 fd here_doc u will exit automticly and wont free file descriptors!!!!!!
+		res = ft_itoa(count);
 		res = ft_strjoin("/tmp/heredoc_", res);
 		if (access(res, F_OK))
 			break ;
@@ -122,7 +122,7 @@ int	heredoc_inputfd(t_file *current, t_env *env)
 	pid = fork();
 	if (pid < 0)
 		return (close(fd[0]), close(fd[1]), perror("minishell: fork"), -1);
-	signal(SIGINT, SIG_IGN); //NOTE: i added this to not print minishell prompt twice
+	signal(SIGINT, SIG_IGN);
 	if (pid == 0)
 	{
 		signal(SIGINT, heredoc_cntrlc);

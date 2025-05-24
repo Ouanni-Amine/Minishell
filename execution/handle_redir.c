@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 17:14:45 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/18 14:36:17 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/24 14:36:38 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int	redirect_input(t_file *current)
 {
 	int	fd;
-	int	flag;
 
 	if (current->token == 2)
 	{
@@ -62,7 +61,6 @@ int	redirect_output(t_file *current)
 
 int	handle_redir(t_main *main)
 {
-	int		fd;
 	t_file	*current;
 
 	current = main->redir;
