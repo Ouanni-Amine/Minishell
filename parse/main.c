@@ -478,7 +478,7 @@ int main(int ac, char **av, char **env)
 			signal(SIGINT, SIG_IGN);
 			ft_parsing(head_lex, head, shell->env, shell);
 			signal(SIGINT, cntrlc);
-			print_main_debug(*head);//remove me next
+			// print_main_debug(*head);//remove me next
 			if (!*head)
 			{
 				my_clean();

@@ -65,7 +65,7 @@ void ft_check_str_variable(t_token **token)
 
 	while (current)
 	{
-		if (current->type == VARIABLE ) //&& current->value[0] == '\0'
+		if (current->type == VARIABLE && current->value[0] == '\0')
 		{
 			tmp = current;
 			if (prev == NULL)
