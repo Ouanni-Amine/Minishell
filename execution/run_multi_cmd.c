@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 09:41:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/21 18:24:44 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/26 16:13:51 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	run_multi_cmd(t_main *main, t_shell *shell)
 	int		status;
 
 	current = main;
-	status = handle_redir_heredoc(main, shell->env);
+	status = handle_redir_heredoc(main, shell);//NOTE: prototype changed
 	if (status)
 		return (heredoc_cleanup(main), status);
 	pipex.prev_fd = STDIN_FILENO;

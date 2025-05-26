@@ -1,16 +1,109 @@
 #include "minishell.h"
 
-static int	is_quote(char c)
+size_t    ft_get_true_len(const char *str, char c)
+{
+    size_t    i;
+
+    i = 0;
+    while (str[i])
+    {
+        if (str[i] == c)
+            return (i);
+        i++;
+    }
+    return (i);
+}
+
+void ft_make_org_var(t_token **head_lex)
+{
+	size_t i;
+	t_token *current;
+
+	current = *head_lex;
+	while (current)
+	{
+		i = 0;
+		while (current->value[i])
+		{
+			if (current->value[i] == 10)
+				current->value[i] = '"';
+			else if (current->value[i] == 11)
+				current->value[i] = '\'';
+			i++;
+		}
+		current = current->next;
+	}
+}
+
+char *change_quotes(char *str)
+{
+	size_t i;
+
+	if (!str || !str[0])
+		return (NULL);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '"')
+			str[i] = 10;
+		else if (str[i] == '\'')
+			str[i] = 11;
+		i++;
+	}
+	return (str);
+}
+
+int	ft_find_export_word(t_token *current)
+{
+	while (current)
+	{
+		if (current->type == PIPE)
+			return (0);
+		else if (!ft_strcmp(current->value, "export") && current->type == WORD)
+			return (1);
+		current = current->next;
+	}
+	return (0);
+}
+
+int ft_strstr_match(const char *haystack, const char *needle)
+{
+	size_t	i;
+	size_t	j;
+
+	if (!needle[0])
+		return (1);
+	i = 0;
+	while (haystack[i])
+	{
+		j = 0;
+		while (haystack[i + j] && haystack[i + j] == needle[j])
+		{
+			if (needle[j + 1] == '\0')
+				return (1);
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
+
+static int is_quote(char c)
 {
 	return (c == '"' || c == '\'');
 }
 
-static int	count_words(const char *s, char sep)
+int count_words2(const char *s, char sep)
 {
-	int i = 0, count = 0;
-	int in_quote = 0;
-	char quote_type = 0;
+	int		i;
+	int		count;
+	int		in_quote;
+	char	quote_type;
 
+	i = 0;
+	count = 0;
+	in_quote = 0;
+	quote_type = 0;
 	while (s[i])
 	{
 		while (s[i] == sep && !in_quote)
@@ -38,11 +131,13 @@ static int	count_words(const char *s, char sep)
 	return (count);
 }
 
-static char	*word_dup(const char *s, int start, int end)
+static char *word_dup(const char *s, int start, int end)
 {
-	char	*word = malloc(end - start + 1);
-	int		i = 0;
+	char	*word;
+	int		i;
 
+	word = ft_malloc(end - start + 1);
+	i = 0;
 	if (!word)
 		return (NULL);
 	while (start < end)
@@ -51,23 +146,22 @@ static char	*word_dup(const char *s, int start, int end)
 	return (word);
 }
 
-static void	*free_all(char **arr, int words)
-{
-	while (words--)
-		free(arr[words]);
-	free(arr);
-	return (NULL);
-}
-
 char	**ft_split(char const *s, char sep)
 {
-	char	**result;
-	int		i = 0, j = 0, start;
-	int		in_quote = 0;
-	char	quote_type = 0;
-	int		nbr_words = count_words(s, sep);
+	char **result;
+	int i = 0;
+	int j;
+	int start;
+	int in_quote;
+	char quote_type;
+	int nbr_words;
 
-	result = malloc(sizeof(char *) * (nbr_words + 1));
+	i = 0;
+	j = 0;
+	in_quote = 0;
+	quote_type = 0;
+	nbr_words = count_words2(s, sep);
+	result = ft_malloc(sizeof(char *) * (nbr_words + 1));
 	if (!result)
 		return (NULL);
 	while (s[i] && j < nbr_words)
@@ -92,28 +186,14 @@ char	**ft_split(char const *s, char sep)
 			i++;
 		}
 		result[j++] = word_dup(s, start, i);
-		if (!result[j - 1])
-			return (free_all(result, j - 1));
 	}
 	result[j] = NULL;
 	return (result);
 }
 
-char	**ft_free_1(int word, char **s2)
-{
-	int	i;
-
-	i = 0;
-	while (i < word)
-		free(s2[i++]);
-	free(s2);
-	return (NULL);
-}
-
-
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	size_t	i;
+	size_t i;
 
 	if (n == 0)
 		return (0);
@@ -129,10 +209,9 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	return (0);
 }
 
-
-size_t ft_strlen (char *str)
+size_t	ft_strlen(char *str)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (str[i])
@@ -140,12 +219,11 @@ size_t ft_strlen (char *str)
 	return (i);
 }
 
-
 t_main	*ft_lstnew()
 {
 	t_main	*p;
 
-	p = (t_main *) malloc(sizeof(t_main));
+	p = (t_main *)ft_malloc(sizeof(t_main));
 	if (!p)
 		return (NULL);
 	p->cmd = NULL;
@@ -155,17 +233,16 @@ t_main	*ft_lstnew()
 	return (p);
 }
 
-void	ft_lstadd_back(t_main **lst, t_main *new)
+void ft_lstadd_back(t_main **lst, t_main *new)
 {
-	t_main	*p;
+	t_main *p;
 
 	p = NULL;
 	if (!new || !lst)
-		return ;
+		return;
 	if (!(*lst))
 	{
 		(*lst) = new;
-
 	}
 	else
 	{
@@ -175,7 +252,7 @@ void	ft_lstadd_back(t_main **lst, t_main *new)
 			if (p->next == NULL)
 			{
 				p->next = new;
-				return ;
+				return;
 			}
 			else
 				p = p->next;
@@ -183,12 +260,12 @@ void	ft_lstadd_back(t_main **lst, t_main *new)
 	}
 }
 
-char	*parse_strdup(const char *s1)
+char *parse_strdup(const char *s1)
 {
-	int		i;
-	char	*p;
+	int i;
+	char *p;
 
-	p = (char *) malloc((ft_strlen((char *) s1) + 1) * sizeof(char));
+	p = (char *) ft_malloc((ft_strlen((char *)s1) + 1) * sizeof(char));
 	if (!p)
 		return (NULL);
 	i = 0;
@@ -201,138 +278,102 @@ char	*parse_strdup(const char *s1)
 	return (p);
 }
 
-void ft_free_cmd(char **cmd)
-{
-	size_t i;
-
-	i = 0;
-	while (cmd[i])
-		free(cmd[i++]);
-	free(cmd);
-}
-
-void free_main_list(t_main *head)
-{
-	t_main *tmp_main;
-	t_file *file;
-	t_file *tmp_file;
-	int i;
-
-	while (head)
-	{
-		tmp_main = head->next;
-		if (head->cmd)
-		{
-			i = 0;
-			while (head->cmd[i])
-			{
-				free(head->cmd[i]);
-				i++;
-			}
-			free(head->cmd);
-		}
-		file = head->redir;
-		while (file)
-		{
-			tmp_file = file->next;
-			free(file->file);
-			free(file);
-			file = tmp_file;
-		}
-
-		free(head);
-		head = tmp_main;
-	}
-}
-
-
-// void    ft_free(void *ptr, int flag)
+// static int myfunction1(char const *s1, char const *s2, int i)
 // {
-//     static void    *lst[INT_MAX];
-//     static int    i;
-//     int            j;
+// 	int	b;
 
-//     if (flag)
-//     {
-//         j = 0;
-//         while (lst[j])
-//             free(lst[j++]);
-//     }
-//     else
-//         lst[i++] = ptr;
-// }
-
-// void    ft_exit(void)
-// {
-//     ft_free(NULL, 1);
-//     exit(1);
-// }
-
-// void    *ft_malloc(size_t n)
-// {
-//     void    *ptr;
-
-//     ptr = malloc(n);
-//     if (!ptr)
-//         ft_exit();
-//     ft_free(ptr, 0);
-//     return (ptr);
-// }
-
-// void	ft_free(void *ptr, int flag)
-// {
-// 	static void	*lst[INT_MAX];
-// 	static int	i;
-// 	int			j;
-
-// 	if (flag)
+// 	b = 0;
+// 	while (s1[i])
 // 	{
-// 		j = 0;
-// 		while (j < i && lst[j])
+// 		if (s1[i] == s2[b])
 // 		{
-// 			free(lst[j]);
-// 			lst[j] = NULL;
-// 			j++;
+// 			i++;
+// 			b = 0;
 // 		}
-// 		i = 0;
+// 		else
+// 		{
+// 			if (!s2[b])
+// 				return (i);
+// 			b++;
+// 		}
 // 	}
-// else
-// 	lst[i++] = ptr;
+// 	return (0);
 // }
 
-// void	my_clean(void)
+// static int myfunction2(char const *s1, char const *s2, int i)
 // {
-// 	ft_free(NULL, 1);
-// }
+// 	int b;
 
-// void	my_exit(status)
-// {
-// 	t_shell	*shell;
-// 	t_env	*env;
-// 	t_env	*next;
-
-// 	ft_free(NULL, 1);
-// 	shell = get_shell(NULL);
-// 	env = shell->env;
-// 	while (env)
+// 	b = 0;
+// 	while (i >= 0)
 // 	{
-// 		next= env->next;
-// 		free(env->key);
-// 		free(env->value);
-// 		free(env);
-// 		env = next;
+// 		if (s1[i] == s2[b])
+// 		{
+// 			i--;
+// 			b = 0;
+// 		}
+// 		else
+// 		{
+// 			if (!s2[b])
+// 				return (i);
+// 			b++;
+// 		}
 // 	}
-// 	free(shell);
-// 	exit(status);
+// 	return (0);
 // }
 
-// void	*ft_malloc(size_t n)
+// static char *f(char *p)
 // {
-// 	void	*ptr;
-
-// 	ptr = malloc(n);
-// 	if (!ptr)
-// 		my_exit(1);
-// 	ft_free(ptr, 0);
-// 	return (ptr);
+// 	p = (char *)ft_malloc(sizeof(char));
+// 	if (!p)
+// 		return (NULL);
+// 	p[0] = '\0';
+// 	return (p);
 // }
+
+// char *ft_strtrim(char const *s1, char const *s2)
+// {
+// 	char *p;
+// 	int i;
+// 	int j;
+// 	int b;
+
+// 	b = 0;
+// 	p = NULL;
+// 	if (s1 && !s2)
+// 		return (ft_strdup(s1, 0));
+// 	if (!s1 || !s1[0])
+// 		return ((char *)f(p));
+// 	else
+// 	{
+// 		i = myfunction1(s1, s2, 0);
+// 		j = myfunction2(s1, s2, ft_strlen((char *)s1) - 1);
+// 		p = (char *)ft_malloc((j - i + 2) * sizeof(char));
+// 		if (!p)
+// 			return (NULL);
+// 		if (j > 0)
+// 			while (i <= j)
+// 				p[b++] = s1[i++];
+// 	}
+// 	p[b] = '\0';
+// 	return (p);
+// }
+
+
+char	*ft_strdup_updated(const char *s1, char c)
+{
+	size_t	i;
+	char	*p;
+	size_t	len;
+
+	len = ft_get_true_len(s1, c);
+	i = 0;
+	p = (char *)ft_malloc((len + 1) * sizeof(char));
+	while (i < len)
+	{
+		p[i] = s1[i];
+		i++;
+	}
+	p[i] = '\0';
+	return (p);
+}

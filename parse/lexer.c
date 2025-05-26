@@ -2,10 +2,13 @@
 
 int	ft_true_nbr(char *str)
 {
-	int i = 0;
-	int count = 0;
-	int in_word = 0;
+	int i;
+	int count;
+	int in_word;
 
+	i = 0;
+	count = 0;
+	in_word = 0;
 	while (str[i])
 	{
 		if (str[i] != ' ' && str[i] != '\t')
@@ -23,50 +26,39 @@ int	ft_true_nbr(char *str)
 	return (count + 1);
 }
 
-char *ft_skip_spaces(char *str)
-{
-	int i = 0, j = 0, cool = 0;
-	int len = ft_true_nbr(str);
-	char *new_str = malloc(sizeof(char) * (len + 1));
-	if (!new_str)
-		return NULL;
-
-	while (str[i])
-	{
-		while (str[i] && (str[i] == ' ' || str[i] == '\t'))
-		{
-			if (cool == 0)
-			{
-				new_str[j++] = ' ';
-				cool = 1;
-			}
-			i++;
-		}
-		while (str[i] && str[i] != ' ' && str[i] != '\t')
-		{
-			new_str[j++] = str[i++];
-			cool = 0;
-		}
-	}
-	new_str[j] = '\0';
-	return (new_str);
-}
 
 int	ft_check_variable(char *str)
 {
+	size_t	i;
+	int		in_dquote;
+	int		in_squote;
+
+	i = 0;
+	in_dquote = 0;
+	in_squote = 0;
 	if (!str)
 		return (0);
-	if (str[0] == '$')
-		return (1);
-	if (!ft_strncmp("export", str, 6))
-		return (1);
+	while (str[i])
+	{
+		if (str[i] == '\"' && !in_squote)
+			in_dquote = !in_dquote;
+		else if (str[i] == '\'' && !in_dquote)
+			in_squote = !in_squote;
+		if (str[i] == '$' && str[i + 1] &&
+			str[i + 1] != ' ' && str[i + 1] != '\t' && ft_symbols(str[i + 1]))
+		{
+			if (!in_squote || in_dquote)
+				return (1);
+		}
+		i++;
+	}
 	return (0);
 }
 
-size_t ft_count_str(char *str)
+size_t	ft_count_str(char *str)
 {
-	size_t count;
-	int i;
+	size_t	count;
+	int		i;
 
 	count = 0;
 	i = 0;
@@ -87,13 +79,13 @@ size_t ft_count_str(char *str)
 
 char *ft_make_it_clear(char *str)
 {
-	size_t len;
-	char *new_str;
-	int i;
-	int j;
+	size_t	len;
+	char	*new_str;
+	int		i;
+	int		j;
 
 	len = ft_count_str(str);
-	new_str = (char *) malloc(sizeof(char) * (len + 1));
+	new_str = (char *) ft_malloc(sizeof(char) * (len + 1));
 	i = 0;
 	j = 0;
 	while (str[i] && (str[i] == ' ' || str[i] == '\t'))
@@ -110,44 +102,44 @@ char *ft_make_it_clear(char *str)
 void	ft_add_val(char *str, t_token **head_lex)
 {
 	t_token *current;
-	int i = 0;
+	int i;
 	char *new_str;
 	char **main_str;
 	t_token *new_node;
 
+	i = 0;
 	new_str = ft_make_space(str);
 	main_str = ft_split(new_str, ' ');
-	free(new_str);
+	while (main_str[i])
+		i++;
+	i = 0;
 	if (!main_str)
 		return ;
 	while (main_str[i])
 	{
-		new_node = malloc(sizeof(t_token));
+		new_node = ft_malloc(sizeof(t_token));
 		if (!new_node)
 			break;
-		new_node->value = strdup(main_str[i]);
+		new_node->value = ft_strdup(main_str[i], '\0');
 		new_node->next = NULL;
 		if (i == 0)
-		{
 			*head_lex = new_node;
-		}
 		else
-		{
 			current->next = new_node;
-		}
 		current = new_node;
 		i++;
 	}
-	ft_free_1(i, main_str);
 }
 
 void	ft_set_type(t_token **head_lex)
 {
-	t_token *current = *head_lex;
+	t_token *current;
+	char *val;
 
+	current = *head_lex;
 	while (current)
 	{
-		char *val = current->value;
+		val = current->value;
 
 		if (!ft_strncmp("|", val, 1) && ft_strlen(val) == 1)
 			current->type = PIPE;
@@ -168,39 +160,28 @@ void	ft_set_type(t_token **head_lex)
 	}
 }
 
-void	print_tokens(t_token *head)
+void	ft_set_export_type(t_token **head_lex)
 {
-	t_token *current = head;
+	t_token *current;
+	char *val;
 
+	current = *head_lex;
 	while (current)
 	{
-		printf("Value: [%s], Type: [%u]\n", current->value, current->type);
+		val = current->value;
+		if (ft_strstr_match(current->value, "export") && current->next && current->next->type == VARIABLE)
+		{
+			val = ft_get_the_true_str3(current->value);
+			if (!strcmp(val, "export") && ft_strcmp(val, current->value))
+				current->type = JUST_EXPORT;
+		}
 		current = current->next;
-	}
-}
-
-void	free_tokens(t_token *head)
-{
-	t_token *tmp;
-
-	while (head)
-	{
-		tmp = head->next;
-		free(head->value);
-		free(head);
-		head = tmp;
 	}
 }
 
 void	lexer(char *str, t_token **head_lex)
 {
-	char *new_str = ft_skip_spaces(str);
-	if (!new_str)
-		return ;
-	ft_add_val(new_str, head_lex);
+	ft_add_val(str, head_lex);
 	ft_set_type(head_lex);
-	// print_tokens(*head_lex);
-	// free_tokens(*head_lex);
-	free(new_str);
+	ft_set_export_type(head_lex);
 }
-

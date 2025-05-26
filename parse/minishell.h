@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 12:37:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/22 12:41:08 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/25 17:36:17 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,10 @@ typedef enum e_token_type
 	REDIR_OUT,
 	REDIR_APPEND,
 	HEREDOC,
-	VARIABLE
-}	t_token_type;
+	VARIABLE,
+	EXPORT_VAL,
+	JUST_EXPORT
+} t_token_type;
 
 typedef struct s_file
 {
@@ -89,25 +91,42 @@ typedef struct s_pipex
 	int		diff;
 }	t_pipex;
 
-void		lexer(char *str, t_token **head_lex);
-char		**ft_split(char const *s, char c);
-int			ft_strncmp(const char *s1, const char *s2, size_t n);
-size_t		ft_strlen(char *str);
-char		**ft_free_1(int word, char **s2);
-void		print_tokens(t_token *head);
-void		free_tokens(t_token *head);
-char		*ft_make_space(char *str);
-t_main		*ft_lstnew(void);
-char		*parse_strdup(const char *s1);
-void		ft_lstadd_back(t_main **lst, t_main *new);
-void		print_main_debug(t_main *head);
-void		free_main_list(t_main *head);
-void		ft_parsing(t_token **head_lex, t_main **head);
-void		ft_check_syntax_error(t_token *head_lex);
-void		ft_exit_syntax_error(void);
-int			ft_check_if_inside_cotes(char *str, size_t i);
-void		ft_check_str(t_token **token);
-char		*ft_skip_thinks(char *str);
+char **ft_split(char const *s, char c);
+int ft_strncmp(const char *s1, const char *s2, size_t n);
+size_t ft_strlen(char *str);
+void print_tokens(t_token *head);
+char *ft_make_space(char *str);
+t_main *ft_lstnew();
+char *parse_strdup(const char *s1);
+void ft_lstadd_back(t_main **lst, t_main *new);
+void print_main_debug(t_main *head);
+int ft_check_syntax_error(t_token *head_lex);
+void ft_exit_syntax_error();
+void ft_check_str(t_token **token);
+char *ft_skip_thinks(char *str, int cool);
+void ft_free(void *ptr, int flag);
+void *ft_malloc(size_t n);
+size_t ft_lstsize(t_token *lst);
+void ft_check_str_variable(t_token **token);
+void	lexer(char *str, t_token **head_lex);
+size_t ft_strlen(char *str);
+int ft_symbols(char c);
+char *ft_get_the_true_str3(char *str);
+char *ft_strdup_updated(const char *s1, char c);
+char *ft_get_the_true_str2(char *str);
+char *ft_check_hard_str(char *str);
+void ft_check_val(t_token **token, t_env *env, t_shell *shell);
+char *ft_add_val_in(char *val, t_env *env, t_shell *shell);
+t_file *create_file_node(t_token *token, t_env *env, t_shell *shell);
+void ft_parsing(t_token **head_lex, t_main **head, t_env *env, t_shell *shell);
+void ft_append_in_file_struct(t_token **current_token, t_file **file_head, t_env *env, t_shell *shell);
+int count_words2(const char *s, char sep);
+char *ft_strtrim(char const *s1, char const *s2);
+int ft_strstr_match(const char *haystack, const char *needle);
+int ft_if_key_valid(char *val);
+char *change_quotes(char *str);
+void ft_make_org_var(t_token **head_lex);
+int ft_symbols_max(char c);
 // ********************************************************************************
 int			ft_echo(char **cmd);
 int			ft_cd(char **cmd, t_shell *shell);
@@ -134,8 +153,8 @@ void		my_exit(int status);
 void		my_clean(void);
 
 int			handle_redir(t_main *main);
-int			handle_redir_heredoc(t_main *main, t_env *env);
-int			heredoc_inputfd(t_file *current, t_env *env);
+int			handle_redir_heredoc(t_main *main, t_shell *shell);
+int			heredoc_inputfd(t_file *current, t_shell *shell);
 int			here_doc_count(t_main *main);
 int			run_multi_cmd(t_main *main, t_shell *shell);
 int			run_builtins(t_main *main, t_shell *shell);
@@ -178,6 +197,7 @@ char		*ft_strdup(const char *s1, char c);
 char		*ft_strjoin(char const *s1, char const *s2);
 char		*ft_strchr(const char *s, int c);
 char		*ft_itoa(int n);
+char		*ft_strndup(const char *s1, size_t len);
 char		*ft_strtrim(char const *s1, char const *set);
 char		*ft_strnstr(const char *haystack, const char *needle, size_t len);
 size_t		env_strlen(const char *s, char c);

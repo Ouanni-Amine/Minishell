@@ -11,6 +11,9 @@ void	print_file_list(t_file *head)
 			head->token == HEREDOC ? "HEREDOC" :
 			head->token == VARIABLE ? "VARIABLE" : "UNKNOWN");
 		printf("        file = \"%s\"\n", head->file);
+		printf("        herdoc = \"%d\"\n", head->here_doc);
+		printf("        expand = \"%d\"\n", head->expand);
+		printf("        ambiguous = \"%d\"\n", head->ambiguous);
 		if (head->next)
 			printf("        next →\n");
 		else
@@ -54,5 +57,22 @@ void	print_main_debug(t_main *head)
 		printf("}\n\n");
 		head = head->next;
 		i = 0;
+	}
+}
+
+
+void	print_tokens(t_token *head)
+{
+	t_token *current = head;
+
+	// current = NULL;
+	if (current == NULL)
+		printf ("error\n") ;
+	else if (current->value[0] == '\0')
+		printf ("error go go go\n");
+	while (current)
+	{
+		printf("Value: [%s], Type: [%u]\n", current->value, current->type);
+		current = current->next;
 	}
 }

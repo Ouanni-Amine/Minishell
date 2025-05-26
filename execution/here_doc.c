@@ -6,13 +6,13 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:48:10 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/24 14:46:27 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/26 16:13:20 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parse/minishell.h"
 
-int	handle_redir_heredoc(t_main *main, t_env *env)
+int	handle_redir_heredoc(t_main *main, t_shell *shell)//NOTE: prototype changed
 {
 	int		fd;
 	t_file	*current;
@@ -27,7 +27,7 @@ int	handle_redir_heredoc(t_main *main, t_env *env)
 		{
 			if (current->token == 5)
 			{
-				fd = heredoc_inputfd(current, env);
+				fd = heredoc_inputfd(current, shell);
 				if (fd < 0)
 					return (1);
 				current->here_doc = fd;
@@ -59,7 +59,7 @@ void	heredoc_cleanup(t_main *main)
 	}
 }
 
-int	fill_tempfile(int input_fd, char *limiter, int expand, t_env *env)
+int	fill_tempfile(int input_fd, char *limiter, int expand, t_shell *shell)//NOTE: prototype changed
 {
 	char	*line;
 	char	*new_line;
@@ -72,11 +72,9 @@ int	fill_tempfile(int input_fd, char *limiter, int expand, t_env *env)
 			break ;
 		if (!ft_strcmp(line, limiter))
 			break ;
-		if (expand && line[0] == '$') //note: this expand is not good u must use the parser expand function!!!!
-		{
-			new_line = ft_strjoin(get_env_value(env, line + 1), "\0");
-			new_line = ft_strjoin(new_line, "\n");
-		}
+		if (expand)//NOTE: prototype changed
+			new_line = ft_strjoin(ft_add_val_in(line, shell->env, shell),
+					"\n");
 		else
 			new_line = ft_strjoin(line, "\n");
 		free(line);
@@ -111,7 +109,7 @@ int	prepare_heredoc_files(int fd[2])
 	return (1);
 }
 
-int	heredoc_inputfd(t_file *current, t_env *env)
+int	heredoc_inputfd(t_file *current, t_shell *shell)//NOTE: prototype changed
 {
 	int		fd[2];
 	pid_t	pid;
@@ -126,7 +124,7 @@ int	heredoc_inputfd(t_file *current, t_env *env)
 	if (pid == 0)
 	{
 		signal(SIGINT, heredoc_cntrlc);
-		if (fill_tempfile(fd[0], current->file, current->expand, env) == -1)
+		if (fill_tempfile(fd[0], current->file, current->expand, shell) == -1)//NOTE: prototype changed
 			exit(1);
 		exit(0);
 	}
