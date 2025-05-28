@@ -6,13 +6,13 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:48:10 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/26 16:13:20 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/28 20:18:02 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parse/minishell.h"
 
-int	handle_redir_heredoc(t_main *main, t_shell *shell)//NOTE: prototype changed
+int	handle_redir_heredoc(t_main *main, t_shell *shell)
 {
 	int		fd;
 	t_file	*current;
@@ -59,7 +59,7 @@ void	heredoc_cleanup(t_main *main)
 	}
 }
 
-int	fill_tempfile(int input_fd, char *limiter, int expand, t_shell *shell)//NOTE: prototype changed
+int	fill_tempfile(int input_fd, char *limiter, int expand, t_shell *shell)
 {
 	char	*line;
 	char	*new_line;
@@ -72,7 +72,7 @@ int	fill_tempfile(int input_fd, char *limiter, int expand, t_shell *shell)//NOTE
 			break ;
 		if (!ft_strcmp(line, limiter))
 			break ;
-		if (expand)//NOTE: prototype changed
+		if (expand)
 			new_line = ft_strjoin(ft_add_val_in(line, shell->env, shell),
 					"\n");
 		else
@@ -109,7 +109,7 @@ int	prepare_heredoc_files(int fd[2])
 	return (1);
 }
 
-int	heredoc_inputfd(t_file *current, t_shell *shell)//NOTE: prototype changed
+int	heredoc_inputfd(t_file *current, t_shell *shell)
 {
 	int		fd[2];
 	pid_t	pid;
@@ -124,7 +124,7 @@ int	heredoc_inputfd(t_file *current, t_shell *shell)//NOTE: prototype changed
 	if (pid == 0)
 	{
 		signal(SIGINT, heredoc_cntrlc);
-		if (fill_tempfile(fd[0], current->file, current->expand, shell) == -1)//NOTE: prototype changed
+		if (fill_tempfile(fd[0], current->file, current->expand, shell) == -1)
 			exit(1);
 		exit(0);
 	}

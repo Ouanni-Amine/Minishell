@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 12:37:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/25 17:36:17 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/28 11:14:14 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <termios.h>
+
+# define DF_PATH "/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:."
 
 typedef enum e_token_type
 {
@@ -180,6 +182,9 @@ char		**env_split(const char *s, char c);
 char		*env_strjoin(char const *s1, char const *s2);
 
 int			ft_strcmp(char *s1, char *s2);
+char		*ft_strrchr(const char *s, int c);
+int			permission_denied(char *dir, char *oldpwd, int free_oldpwd, t_shell *shell);
+int			update_env_vars(t_shell *shell, char *oldpwd, int free_oldpwd);
 int			ft_isdigit(int c);
 int			is_valide_num(char *str);
 int			ft_isalnum_unscore(char *str);

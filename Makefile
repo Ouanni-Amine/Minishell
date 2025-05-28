@@ -4,8 +4,8 @@ SRC = builtin/ft_cd.c  builtin/ft_echo.c  builtin/ft_env.c  builtin/ft_exit.c  b
 	garbage_collector/ft_malloc.c \
 	parse/debug_functions.c  parse/ft_split.c  parse/lexer.c  parse/main.c  parse/parsing.c  parse/syntax_error.c  parse/test_self.c  parse/utils1.c \
 	tools/env_split.c  tools/env_strlen.c  tools/ft_atoll.c  tools/ft_itoa.c  tools/ft_putchar_fd.c  tools/ft_strchr.c  tools/ft_strjoin.c  tools/here_doc_count.c  tools/set_last_status.c \
-	tools/env_strdup.c  tools/error.c  tools/ft_isalnum_unscore.c  tools/ft_memcpy.c  tools/ft_putendl_fd.c  tools/ft_strcmp.c  tools/ft_strnstr.c  tools/is_valide.c \
-	tools/env_strjoin.c  tools/ft_atoi.c  tools/ft_isdigit.c  tools/ft_memset.c  tools/ft_putstr_fd.c  tools/ft_strdup.c  tools/ft_strtrim.c  tools/is_valide_num.c
+	tools/env_strdup.c  tools/error.c  tools/ft_isalnum_unscore.c  tools/ft_memcpy.c  tools/ft_putendl_fd.c  tools/ft_strcmp.c  tools/ft_strnstr.c  tools/is_valide.c  tools/normilize_path.c\
+	tools/env_strjoin.c  tools/ft_atoi.c  tools/ft_isdigit.c  tools/ft_memset.c  tools/ft_putstr_fd.c  tools/ft_strdup.c  tools/ft_strtrim.c  tools/is_valide_num.c  tools/ft_strrchr.c \
 
 OBJS = $(SRC:.c=.o)
 
@@ -29,5 +29,3 @@ fclean: clean
 	$(RM) $(NAME)
 
 re: fclean all
-
-.PHONY: clean

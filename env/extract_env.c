@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 17:06:29 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/24 14:35:57 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/28 09:13:07 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,14 +71,18 @@ void	shellvl(char *key, char *env, t_env **head)
 	free(val);
 }
 
-void	env_inherited(t_env	**head, char **env, char *key, char *val)
+void	env_inherited(t_env	**head, char **env)
 {
+	char	*key;
+	char	*val;
+
 	while (*env)
 	{
 		key = env_strdup(*env, '=');
 		if (!key)
 			my_exit(1);
-		if (ft_strcmp(key, "OLDPWD") && ft_strcmp(key, "SHLVL"))
+		if (ft_strcmp(key, "OLDPWD") && ft_strcmp(key, "SHLVL")
+			&& ft_strcmp(key, "PWD"))
 		{
 			val = env_strdup(ft_strchr(*env, '=') + 1, '\0');
 			if (!val)
@@ -89,10 +93,8 @@ void	env_inherited(t_env	**head, char **env, char *key, char *val)
 			env_add_back(head, create_env_node(key, val, 1));
 			free(val);
 		}
-		if (!ft_strcmp(key, "SHLVL"))
-		{
+		else if (!ft_strcmp(key, "SHLVL"))
 			shellvl(key, *env, head);
-		}
 		free(key);
 		env++;
 	}
@@ -101,24 +103,27 @@ void	env_inherited(t_env	**head, char **env, char *key, char *val)
 void	extract_env(t_shell *shell, char **env)
 {
 	char	*dir;
-	char	*key;
-	char	*val;
 	t_env	**head;
 
-	key = NULL;
-	val = NULL;
 	head = &shell->env;
+	dir = getcwd(NULL, 0);
+	if (!dir)
+		my_exit(1);
+	env_add_back(head, create_env_node("PWD", dir, 1));
+	shell->pwd_emergcy = env_strdup(dir, '\0');
+	free(dir);
 	if (!*env)
 	{
-		dir = getcwd(NULL, 0);
-		env_add_back(head, create_env_node("PWD", dir, 1));
 		env_add_back(head, create_env_node("SHLVL", "1", 1));
-		env_add_back(head, create_env_node("PATH",
-				"/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:.", 1));
-		free(dir);
+		env_add_back(head, create_env_node("PATH",DF_PATH, 1));
 	}
 	else
-		env_inherited(head, env, key, val);
+	{
+		env_inherited(head, env);
+		if (!get_env_value(shell->env, "SHLVL"))
+			env_add_back(head, create_env_node("SHLVL", "1", 1));
+		if (!get_env_value(shell->env, "PATH"))
+			env_add_back(head, create_env_node("PATH",DF_PATH, 1));
+	}
 	env_add_back(head, create_env_node("OLDPWD", "", 0));
-	shell->pwd_emergcy = env_strdup(get_env_value(*head, "PWD"), '\0');
 }

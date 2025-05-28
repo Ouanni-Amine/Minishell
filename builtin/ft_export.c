@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 21:02:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/26 16:11:32 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/28 17:34:49 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	ft_export_func(char *cmd, t_env **env, char *res, int *status)
 	char	*key;
 	char	*add;
 
-	if (res > cmd && *(res - 1) == '+')//NOTE: i modified this
+	if (res > cmd && *(res - 1) == '+')
 		key = ft_strndup(cmd, env_strlen(cmd, '=') - 1);
 	else
 		key = ft_strdup(cmd, '=');

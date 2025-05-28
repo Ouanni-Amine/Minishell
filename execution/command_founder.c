@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:46:23 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/26 16:06:29 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/28 17:35:10 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ char	*command_founder(char **cmd_args, t_env *env)
 	char	*path;
 
 	path = get_env_value(env, "PATH");
-	if (!path || !path[0])//NOTE: add this when merging
+	if (!path || !path[0])
 		return (check_file_acces(cmd_args[0]), cmd_args[0]);
 	if (ft_strchr(cmd_args[0], '/'))
 		return (check_file_acces(cmd_args[0]), cmd_args[0]);

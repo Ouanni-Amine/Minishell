@@ -409,13 +409,13 @@ int	valide_requirements(void)
 
 	if (!isatty(STDIN_FILENO))
 	{
-		error("minishell: minishell run only in a tty", 0, 0, 0);
+		ft_putstr_fd("minishell: minishell run only in a tty\n", 2);
 		return (1);
 	}
 	res = getcwd(NULL, 0);
 	if (!res)
 	{
-		error("minishell: minishell cannot run in orphan path", 0, 0, 0);
+		ft_putstr_fd("minishell: minishell cannot run in orphan path\n", 2);
 		return (1);
 	}
 	free(res);

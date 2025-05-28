@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 20:18:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/26 20:22:21 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/27 14:21:27 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	ft_exit(char **cmd, t_shell *shell)
 	int	fail;
 
 	if (!shell->is_pipe)
-		printf("exit\n");
+		ft_putstr_fd("exit\n", 2);
 	if (cmd[1])
 	{
 		if (!is_valide_num(cmd[1]) || ft_atoi(cmd[1], &fail) != 1)

@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 13:00:55 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/24 14:45:48 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/28 11:45:46 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int	update_env_vars(t_shell *shell, char *oldpwd, int free_oldpwd)
 int	cd_to_home(t_shell *shell, char *oldpwd, int free_oldpwd)
 {
 	char	*home;
+	int		res;
 
 	home = get_env_value(shell->env, "HOME");
 	if (!home)
@@ -51,6 +52,9 @@ int	cd_to_home(t_shell *shell, char *oldpwd, int free_oldpwd)
 	}
 	if (chdir(home) == -1)
 	{
+		res = permission_denied(home, oldpwd, free_oldpwd, shell);
+		if (res != -1)
+			return (res);
 		perror("minishell: cd");
 		if (free_oldpwd)
 			free(oldpwd);
@@ -88,8 +92,13 @@ int	special_case(t_shell *shell, char *arg)
 
 int	cd_to_dir(t_shell *shell, char *dir, char *oldpwd, int free_oldpwd)
 {
+	int	res;
+
 	if (chdir(dir) == -1)
 	{
+		res = permission_denied(dir, oldpwd, free_oldpwd, shell);
+		if (res != -1)
+			return (res);
 		error("minishell: cd: ", dir, ": ", strerror(errno));
 		if (free_oldpwd)
 			free(oldpwd);
