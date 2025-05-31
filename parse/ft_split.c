@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-size_t    ft_get_true_len(const char *str, char c)
+size_t	ft_get_true_len(const char *str, char c)
 {
     size_t    i;
 
@@ -93,6 +93,26 @@ static int is_quote(char c)
 	return (c == '"' || c == '\'');
 }
 
+static void ft_count_word2_norm(const char *s, char sep, int *i, int *in_quote, char quote_type)
+{
+	while (s[*i])
+	{
+		if (is_quote(s[*i]))
+		{
+			if (!*in_quote)
+			{
+				*in_quote = 1;
+				quote_type = s[*i];
+			}
+			else if (s[*i] == quote_type)
+				*in_quote = 0;
+		}
+		else if (s[*i] == sep && !*in_quote)
+			break;
+		(*i)++;
+	}
+}
+
 int count_words2(const char *s, char sep)
 {
 	int		i;
@@ -111,22 +131,7 @@ int count_words2(const char *s, char sep)
 		if (!s[i])
 			break;
 		count++;
-		while (s[i])
-		{
-			if (is_quote(s[i]))
-			{
-				if (!in_quote)
-				{
-					in_quote = 1;
-					quote_type = s[i];
-				}
-				else if (s[i] == quote_type)
-					in_quote = 0;
-			}
-			else if (s[i] == sep && !in_quote)
-				break;
-			i++;
-		}
+		ft_count_word2_norm(s, sep, &i, &in_quote, quote_type);
 	}
 	return (count);
 }
@@ -146,48 +151,52 @@ static char *word_dup(const char *s, int start, int end)
 	return (word);
 }
 
+void split_norm(t_norm *norm, const char *s, int *in_quote, char quote_type, char sep)
+{
+	while (s[(*norm).i])
+	{
+		if (is_quote(s[(*norm).i]))
+		{
+			if (!*in_quote)
+			{
+				*in_quote = 1;
+				quote_type = s[(*norm).i];
+			}
+			else if (s[(*norm).i] == quote_type)
+				*in_quote = 0;
+		}
+		else if (s[(*norm).i] == sep && !*in_quote)
+			break;
+		(*norm).i++;
+	}
+}
+
 char	**ft_split(char const *s, char sep)
 {
 	char **result;
-	int i = 0;
-	int j;
-	int start;
+	t_norm norm;
 	int in_quote;
 	char quote_type;
-	int nbr_words;
+	size_t nbr_words;
 
-	i = 0;
-	j = 0;
+	norm.i = 0;
+	norm.j = 0;
+	norm.start = 0;
 	in_quote = 0;
 	quote_type = 0;
 	nbr_words = count_words2(s, sep);
 	result = ft_malloc(sizeof(char *) * (nbr_words + 1));
 	if (!result)
 		return (NULL);
-	while (s[i] && j < nbr_words)
+	while (s[norm.i] && norm.j < nbr_words)
 	{
-		while (s[i] == sep && !in_quote)
-			i++;
-		start = i;
-		while (s[i])
-		{
-			if (is_quote(s[i]))
-			{
-				if (!in_quote)
-				{
-					in_quote = 1;
-					quote_type = s[i];
-				}
-				else if (s[i] == quote_type)
-					in_quote = 0;
-			}
-			else if (s[i] == sep && !in_quote)
-				break;
-			i++;
-		}
-		result[j++] = word_dup(s, start, i);
+		while (s[norm.i] == sep && !in_quote)
+			norm.i++;
+		norm.start = norm.i;
+		split_norm(&norm, s, &in_quote, quote_type, sep);
+		result[norm.j++] = word_dup(s, norm.start, norm.i);
 	}
-	result[j] = NULL;
+	result[norm.j] = NULL;
 	return (result);
 }
 
@@ -277,88 +286,6 @@ char *parse_strdup(const char *s1)
 	p[i] = '\0';
 	return (p);
 }
-
-// static int myfunction1(char const *s1, char const *s2, int i)
-// {
-// 	int	b;
-
-// 	b = 0;
-// 	while (s1[i])
-// 	{
-// 		if (s1[i] == s2[b])
-// 		{
-// 			i++;
-// 			b = 0;
-// 		}
-// 		else
-// 		{
-// 			if (!s2[b])
-// 				return (i);
-// 			b++;
-// 		}
-// 	}
-// 	return (0);
-// }
-
-// static int myfunction2(char const *s1, char const *s2, int i)
-// {
-// 	int b;
-
-// 	b = 0;
-// 	while (i >= 0)
-// 	{
-// 		if (s1[i] == s2[b])
-// 		{
-// 			i--;
-// 			b = 0;
-// 		}
-// 		else
-// 		{
-// 			if (!s2[b])
-// 				return (i);
-// 			b++;
-// 		}
-// 	}
-// 	return (0);
-// }
-
-// static char *f(char *p)
-// {
-// 	p = (char *)ft_malloc(sizeof(char));
-// 	if (!p)
-// 		return (NULL);
-// 	p[0] = '\0';
-// 	return (p);
-// }
-
-// char *ft_strtrim(char const *s1, char const *s2)
-// {
-// 	char *p;
-// 	int i;
-// 	int j;
-// 	int b;
-
-// 	b = 0;
-// 	p = NULL;
-// 	if (s1 && !s2)
-// 		return (ft_strdup(s1, 0));
-// 	if (!s1 || !s1[0])
-// 		return ((char *)f(p));
-// 	else
-// 	{
-// 		i = myfunction1(s1, s2, 0);
-// 		j = myfunction2(s1, s2, ft_strlen((char *)s1) - 1);
-// 		p = (char *)ft_malloc((j - i + 2) * sizeof(char));
-// 		if (!p)
-// 			return (NULL);
-// 		if (j > 0)
-// 			while (i <= j)
-// 				p[b++] = s1[i++];
-// 	}
-// 	p[b] = '\0';
-// 	return (p);
-// }
-
 
 char	*ft_strdup_updated(const char *s1, char c)
 {

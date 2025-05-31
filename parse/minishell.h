@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 12:37:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/28 11:14:14 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/30 16:37:54 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <termios.h>
-
-# define DF_PATH "/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:."
 
 typedef enum e_token_type
 {
@@ -93,6 +91,24 @@ typedef struct s_pipex
 	int		diff;
 }	t_pipex;
 
+typedef struct	s_norm
+{
+	size_t i;
+	size_t j;
+	size_t start;
+	size_t len;
+	size_t k;
+	t_token *tmp;
+	t_token *past;
+	t_token *prev;
+	t_token *next;
+	t_main *current_main;
+	t_file *file_head;
+	size_t cmd_index;
+	size_t cmd_count;
+	t_token *current_token;
+}	t_norm;
+
 char **ft_split(char const *s, char c);
 int ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t ft_strlen(char *str);
@@ -143,7 +159,7 @@ void		env_add_back(t_env	**head, t_env *new);
 void		env_add_back(t_env	**head, t_env *new);
 void		set_env_value(t_env **head, char *key, char *value, int i);
 void		sort_export(t_env **env);
-void		extract_env(t_shell *shell, char **env);
+void		extract_env(t_shell *shell, char **env, char *df_path);
 char		*get_env_value(t_env *env, char *key);
 char		**env_convertor(t_env *env);
 t_env		*create_env_node(char *key, char *value, int i);

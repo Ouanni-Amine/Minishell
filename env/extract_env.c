@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 17:06:29 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/28 09:13:07 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/30 10:57:06 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void	env_inherited(t_env	**head, char **env)
 	}
 }
 
-void	extract_env(t_shell *shell, char **env)
+void	extract_env(t_shell *shell, char **env, char *df_path)
 {
 	char	*dir;
 	t_env	**head;
@@ -115,7 +115,7 @@ void	extract_env(t_shell *shell, char **env)
 	if (!*env)
 	{
 		env_add_back(head, create_env_node("SHLVL", "1", 1));
-		env_add_back(head, create_env_node("PATH",DF_PATH, 1));
+		env_add_back(head, create_env_node("PATH", df_path, 1));
 	}
 	else
 	{
@@ -123,7 +123,7 @@ void	extract_env(t_shell *shell, char **env)
 		if (!get_env_value(shell->env, "SHLVL"))
 			env_add_back(head, create_env_node("SHLVL", "1", 1));
 		if (!get_env_value(shell->env, "PATH"))
-			env_add_back(head, create_env_node("PATH",DF_PATH, 1));
+			env_add_back(head, create_env_node("PATH", df_path, 1));
 	}
 	env_add_back(head, create_env_node("OLDPWD", "", 0));
 }

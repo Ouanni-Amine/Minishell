@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 09:41:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/28 19:48:55 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/30 11:06:44 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ int	pipex_logique(t_pipex *pipex, t_main *main, t_shell *shell, int i)
 	t_main	*current;
 
 	current = main;
+	signal(SIGINT, cntrlc_child);
+	signal(SIGQUIT, cntrlslash);
 	while (i < pipex->nb_cmd)
 	{
 		pipex->diff = i < pipex->nb_cmd - 1;
@@ -47,8 +49,6 @@ int	pipex_logique(t_pipex *pipex, t_main *main, t_shell *shell, int i)
 				return (heredoc_cleanup(main),
 					pipex_cleanup(pipex, 0, 0, "minishell: pipe"), 1);
 		}
-		signal(SIGINT, cntrlc_child);
-		signal(SIGQUIT, cntrlslash);
 		pipex->pid = fork();
 		if (pipex->pid < 0)
 			return (heredoc_cleanup(main),

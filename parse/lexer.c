@@ -110,9 +110,6 @@ void	ft_add_val(char *str, t_token **head_lex)
 	i = 0;
 	new_str = ft_make_space(str);
 	main_str = ft_split(new_str, ' ');
-	while (main_str[i])
-		i++;
-	i = 0;
 	if (!main_str)
 		return ;
 	while (main_str[i])

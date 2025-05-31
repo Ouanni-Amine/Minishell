@@ -6,6 +6,8 @@ int ft_check_place_of_special(t_token *current)
 		return (0);
 	if ((current->type >= 2 && current->type <= 5) && current->next->type == 1)
 		return (0);
+	else if ((current->type >= PIPE && current->type <= HEREDOC) && ((current->next->type >= PIPE && current->next->type <= HEREDOC)))
+		return (0);
 	else if (current->type == current->next->type)
 		return (0);
 	return (1);
@@ -90,13 +92,7 @@ int ft_check_syntax_error(t_token *head_lex)
 	while (current)
 	{
 		if (cool == 1 && current->type == 1)
-		{
 			return (0);
-		}
-		else if (past && !ft_strcmp(past->value, "export") && current->type == VARIABLE)
-		{
-			past = current;
-		}
 		else if (current->type == 1 || (current->type >= 2 && current->type <= 5))
 		{
 			if (ft_check_place_of_special(current) == 0)

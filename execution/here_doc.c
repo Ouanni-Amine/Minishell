@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:48:10 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/28 20:18:02 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/05/30 11:25:14 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@ int	handle_redir_heredoc(t_main *main, t_shell *shell)
 	t_file	*current;
 
 	if (!here_doc_count(main))
-		return (error("Minishell: maximum here-document count exceeded",
-				0, 0, 0), 2);
+	{
+		ft_putstr_fd("Minishell: maximum here-document count exceeded\n", 2);
+		my_exit(2);
+	}
 	while (main)
 	{
 		current = main->redir;

@@ -67,17 +67,11 @@ t_file *create_file_node(t_token *token, t_env *env, t_shell *shell)
 	new_file->file = parse_strdup(ft_get_the_true_str3(token->next->value));
 	new_file->here_doc = -1;
 	if (token->type == HEREDOC && token->next->value && ft_check_expand(token->next->value))
-	{
 		new_file->expand = 1;
-	}
 	else
-	{
 		new_file->expand = 0;
-	}
 	if ((token->type == REDIR_IN || token->type == REDIR_OUT) && token->next->value && ft_check_content(token->next->value, token->next->type, env, shell))
-	{
 		new_file->ambiguous = 1;
-	}
 	else
 	{
 		if (new_file->expand == 0 && token->type != HEREDOC && token->next && token->next->type == 6)
@@ -166,57 +160,58 @@ int ft_check_if_is_built(char *value)
 	return (0);
 }
 
+void ft_parsing_norm_max(t_norm *norm, t_main **head)
+{
+	norm->current_main = ft_lstnew();
+	ft_lstadd_back(head, norm->current_main);
+	norm->file_head = NULL;
+	norm->cmd_index = 0;
+	norm->cmd_count = ft_count_word_token(norm->current_token);
+	norm->current_main->cmd = ft_malloc(sizeof(char *) * (norm->cmd_count + 1));
+}
+
+t_token *ft_parsing_norm(t_norm *norm, t_env *env, t_main **head, t_shell *shell)
+{
+	if (!norm->current_main)
+		ft_parsing_norm_max(norm, head);
+	if (norm->current_token->type >= REDIR_IN && norm->current_token->type <= HEREDOC)
+	{
+		ft_append_in_file_struct(&norm->current_token, &norm->file_head, env, shell);
+		norm->current_main->redir = norm->file_head;
+	}
+	else if (norm->current_token->type == WORD || norm->current_token->type == VARIABLE ||
+			norm->current_token->type == EXPORT_VAL || norm->current_token->type == JUST_EXPORT)
+		ft_append_in_main_struct(norm->current_main, &norm->current_token, &norm->cmd_index);
+	else if (norm->current_token->type == PIPE)
+	{
+		norm->current_main->cmd[norm->cmd_index] = NULL;
+		norm->current_main = NULL;
+		norm->current_token = norm->current_token->next;
+	}
+	else
+		norm->current_token = norm->current_token->next;
+	return (norm->current_token);
+}
+
 void ft_parsing(t_token **head_lex, t_main **head, t_env *env, t_shell *shell)
 {
-	t_token *current_token = *head_lex;
-	t_main *current_main = NULL;
-	t_file *file_head = NULL;
-	size_t cmd_index = 0;
-	size_t cmd_count;
+	t_norm norm;
 
-
-	while (current_token)
+	norm.current_token = *head_lex;
+	norm.current_main = NULL;
+	norm.file_head = NULL;
+	norm.cmd_index = 0;
+	while (norm.current_token)
 	{
-		if (!current_main)
-		{
-			current_main = ft_lstnew();
-			if (!current_main)
-				return;
-			ft_lstadd_back(head, current_main);
-			file_head = NULL;
-			cmd_index = 0;
-			cmd_count = ft_count_word_token(current_token);
-			current_main->cmd = ft_malloc(sizeof(char *) * (cmd_count + 1));
-			if (!current_main->cmd)
-				return;
-		}
-		if (current_token->type >= REDIR_IN && current_token->type <= HEREDOC)
-		{
-			ft_append_in_file_struct(&current_token, &file_head, env, shell);
-			current_main->redir = file_head;
-		}
-		else if (current_token->type == WORD || current_token->type == VARIABLE || current_token->type == EXPORT_VAL || current_token->type == JUST_EXPORT)
-		{
-			ft_append_in_main_struct(current_main, &current_token, &cmd_index);
-		}
-		else if (current_token->type == PIPE)
-		{
-			current_main->cmd[cmd_index] = NULL;
-			current_main = NULL;
-			current_token = current_token->next;
-		}
-		else
-			current_token = current_token->next;
+		norm.current_token = ft_parsing_norm(&norm, env, head, shell);
 	}
-	if (current_main)
-		current_main->cmd[cmd_index] = NULL;
-	current_main = *head;
-	while (current_main)
+	if (norm.current_main)
+		norm.current_main->cmd[norm.cmd_index] = NULL;
+	norm.current_main = *head;
+	while (norm.current_main)
 	{
-		if (current_main->cmd[0] && ft_check_if_is_built(current_main->cmd[0]))
-		{
-			current_main->is_builtin = 1;
-		}
-		current_main = current_main->next;
+		if (norm.current_main->cmd[0] && ft_check_if_is_built(norm.current_main->cmd[0]))
+			norm.current_main->is_builtin = 1;
+		norm.current_main = norm.current_main->next;
 	}
 }

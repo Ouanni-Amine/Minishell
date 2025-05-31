@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/29 16:58:51 by aouanni           #+#    #+#             */
+/*   Updated: 2025/05/31 15:12:07 by aouanni          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 size_t ft_lstsize(t_token *lst)
@@ -109,9 +121,9 @@ int ft_symbols_max(char c)
 		return (1);
 	if (c >= 'A' && c <= 'Z')
 		return (1);
-	if (c >= '0' && c <= '9')
+	if ((c >= '0' && c <= '9') || c == '_')
 		return (1);
-	if (c == '_' || c == '?' || c == '$')
+	if (c == '?' || c == '$')
 		return (0);
 	return (0);
 }
@@ -124,96 +136,114 @@ int ft_symbols(char c)
 		return (1);
 	if (c >= '0' && c <= '9')
 		return (1);
-	if (c == '_' || c == '?' || c == '$')
+	if (c == '_' || c == '?' ) // || c == '$'
 		return (1);
 	return (0);
+}
+
+void ft_add_val_len_norm(char *val, t_env *env, t_shell *shell, t_norm *norm, char *local)
+{
+	while (val[(*norm).i])
+	{
+		if (val[(*norm).i] == '$' && val[(*norm).i + 1] && val[(*norm).i + 1] == '?')
+		{
+			local = ft_itoa(shell->last_status);
+			(*norm).j = 0;
+			(*norm).len += ft_strlen(local);
+			(*norm).i += 2;
+			continue;
+		}
+		else if (val[(*norm).i] == '$' && val[(*norm).i + 1] && ((val[(*norm).i + 1] >= '0' && val[(*norm).i + 1] <= '9') )) // || val[i + 1] == '$' || val[i + 1] == '_'
+		{
+			(local = "", (*norm).i += 2);
+			continue;
+		}
+		else if (val[(*norm).i] == '$' && val[(*norm).i + 1] && ft_symbols_max(val[(*norm).i + 1]))
+		{
+			local = change_quotes(ft_strdup(get_env_value(env, get_nameof_val(val, (*norm).i)), '\0'));
+			if (local)
+				(*norm).len += ft_strlen(local);
+			(*norm).i += ft_strlen(get_nameof_val(val, (*norm).i)) + 1;
+		}
+		else
+			((*norm).len++, (*norm).i++);
+	}
+}
+
+void ft_add_val_str_norm_special(t_norm *norm, t_shell *shell, char *full_str)
+{
+	char *local;
+
+	local = NULL;
+	local = ft_itoa(shell->last_status);
+	(*norm).j = 0;
+	while (local[(*norm).j])
+		full_str[((*norm).k)++] = local[((*norm).j)++];
+	(*norm).i += 2;
+}
+
+void ft_add_val_str_norm_simple(t_env *env, t_norm *norm, char *val, char *full_str)
+{
+	char *local;
+
+	local = change_quotes(ft_strdup(get_env_value(env, get_nameof_val(val, (*norm).i)), '\0'));
+	if (local)
+	{
+		(*norm).j = 0;
+		while (local[(*norm).j])
+			full_str[((*norm).k)++] = local[((*norm).j)++];
+	}
+	(*norm).i += ft_strlen(get_nameof_val(val, (*norm).i)) + 1;
+}
+
+void ft_add_val_str_norm(char *val, t_norm *norm, t_shell *shell, t_env *env, char *full_str)
+{
+	char *local;
+
+	local = NULL;
+	while (val[(*norm).i])
+	{
+		if (val[(*norm).i] == '$' && val[(*norm).i + 1] && val[(*norm).i + 1] == '?')
+		{
+			ft_add_val_str_norm_special(norm, shell, full_str);
+			continue;
+		}
+		else if (val[(*norm).i] == '$' && val[(*norm).i + 1] && ((val[(*norm).i + 1] >= '0' && val[(*norm).i + 1] <= '9'))) // || val[i + 1] == '$' || val[i + 1] == '_'
+		{
+			local = "";
+			(*norm).i += 2;
+			continue;
+		}
+		if (val[(*norm).i] == '$' && val[(*norm).i + 1] && ft_symbols_max(val[(*norm).i + 1]))
+			ft_add_val_str_norm_simple(env, norm, val, full_str);
+		else
+			full_str[(*norm).k++] = val[(*norm).i++];
+	}
+	full_str[(*norm).k] = '\0';
 }
 
 char *ft_add_val_in(char *val, t_env *env, t_shell *shell)
 {
 	char *full_str;
-	size_t i;
+	t_norm norm;
 	char *local;
-	size_t k;
-	size_t len;
-	size_t j;
 
-	i = 0;
-	k = 0;
-	len = 0;
-	j = 0;
+	norm.i = 0;
+	norm.k = 0;
+	norm.len = 0;
+	norm.j = 0;
 	if (!val)
 		return (NULL);
-	while (val[i])
-	{
-		if (val[i] == '$' && val[i + 1] && val[i + 1] == '?')
-		{
-			local = ft_itoa(shell->last_status);
-			j = 0;
-			len = ft_strlen(local);
-			i += 2;
-			continue;
-		}
-		else if (val[i] == '$' && val[i + 1] && ((val[i + 1] >= '0' && val[i + 1] <= '9') || val[i + 1] == '$' || val[i + 1] == '_'))
-		{
-			local = "";
-			i += 2;
-			continue;
-		}
-		else if (val[i] == '$' && val[i + 1] && ft_symbols_max(val[i + 1]))
-		{
-			local = change_quotes(ft_strdup(get_env_value(env, get_nameof_val(val, i)), '\0'));
-			if (local)
-				len += ft_strlen(local);
-			i += ft_strlen(get_nameof_val(val, i)) + 1;
-		}
-		else
-		{
-			len++;
-			i++;
-		}
-	}
-	full_str = ft_malloc(len + 1);
-	i = 0;
-	k = 0;
-	while (val[i])
-	{
-		if (val[i] == '$' && val[i + 1] && val[i + 1] == '?')
-		{
-			local = ft_itoa(shell->last_status);
-			j = 0;
-			while (local[j])
-				full_str[k++] = local[j++];
-			i += 2;
-			continue;
-		}
-		else if (val[i] == '$' && val[i + 1] && ((val[i + 1] >= '0' && val[i + 1] <= '9') || val[i + 1] == '$' || val[i + 1] == '_'))
-		{
-			local = "";
-			i += 2;
-			continue;
-		}
-		if (val[i] == '$' && val[i + 1] && ft_symbols_max(val[i + 1]))
-		{
-			local = change_quotes(ft_strdup(get_env_value(env, get_nameof_val(val, i)), '\0'));
-			if (local)
-			{
-				j = 0;
-				while (local[j])
-					full_str[k++] = local[j++];
-			}
-			i += ft_strlen(get_nameof_val(val, i)) + 1;
-		}
-		else
-			full_str[k++] = val[i++];
-	}
-	full_str[k] = '\0';
+	ft_add_val_len_norm(val, env, shell, &norm, local);
+	full_str = ft_malloc(norm.len + 1);
+	(norm.i = 0, norm.k = 0);
+	ft_add_val_str_norm(val, &norm, shell, env, full_str);
 	return (full_str);
 }
 
 int ft_isspaces_inside(char *str)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (str[i])
@@ -297,6 +327,8 @@ t_token	*ft_add_token(t_token *current)
 
 	i = 0;
 	new_str = ft_split(current->value, ' ');
+	if (!new_str[0])
+		return (NULL);
 	current_next = current->next;
 	org = current;
 	current->value = new_str[i++];
@@ -346,68 +378,60 @@ int ft_if_key_valid(char *val)
 	return (0);
 }
 
+t_token *ft_check_val_norm_max(t_norm *norm, t_token *current, t_env *env, t_shell *shell)
+{
+	current->value = ft_add_val_in(current->value, env, shell);
+	current = ft_add_token(current);
+	(norm->past = current, current = norm->next);
+	return (current);
+}
+
+t_token *ft_check_val_norm(t_norm *norm, t_token *current, t_env *env,
+							t_shell *shell, t_token **token)
+{
+	if (norm->past != NULL && norm->past->type == HEREDOC && current->type == VARIABLE)
+		(norm->past = current, current = norm->next);
+	else if (norm->past != NULL && (norm->past->type == REDIR_IN || norm->past->type == REDIR_OUT) && current->type == VARIABLE)
+		(norm->past = current, current = norm->next);
+	else if (norm->past && norm->past->type == JUST_EXPORT && current->type == VARIABLE)
+		current = ft_check_val_norm_max(norm, current, env, shell);
+	else if (!ft_strcmp((*token)->value, "export") && (*token)->type == VARIABLE && ft_if_key_valid(current->value) && current->type == VARIABLE)
+		current = ft_check_val_norm_max(norm, current, env, shell);
+	else if (!ft_strcmp((*token)->value, "export") && ft_if_key_valid(current->value))
+	{
+		current->value = ft_add_val_in(current->value, env, shell);
+		(norm->past = current, current = norm->next);
+	}
+	else if (current->type == VARIABLE || current->type == EXPORT_VAL)
+	{
+		current->value = ft_add_val_in(current->value, env, shell);
+		if (ft_isspaces_inside(current->value))
+			current = ft_add_token(current);
+		(norm->past = current, current = norm->next);
+	}
+	else
+		(norm->past = current, current = norm->next);
+	return (current);
+}
+
 void ft_check_val(t_token **token, t_env *env, t_shell *shell)
 {
 	t_token *current;
-	t_token *next;
-	t_token *past;
+	t_norm norm;
 
 	current = *token;
-	past = NULL;
+	norm.past = NULL;
 	while (current)
 	{
-		next = current->next;
-		if (past != NULL && past->type == HEREDOC && current->type == VARIABLE)
-		{
-			past = current;
-			current = next;
-		}
-		else if (past != NULL && (past->type == REDIR_IN || past->type == REDIR_OUT) && current->type == VARIABLE)
-		{
-			past = current;
-			current = next;
-		}
-		else if (past && past->type == JUST_EXPORT && current->type == VARIABLE)
-		{
-			current->value = ft_add_val_in(current->value, env, shell);
-			current = ft_add_token(current);
-			past = current;
-			current = next;
-		}
-		else if (!ft_strcmp((*token)->value, "export") && (*token)->type == VARIABLE && ft_if_key_valid(current->value) && current->type == VARIABLE)
-		{
-			current->value = ft_add_val_in(current->value, env, shell);
-			current = ft_add_token(current);
-			past = current;
-			current = next;
-		}
-		else if (!ft_strcmp((*token)->value, "export") && ft_if_key_valid(current->value))
-		{
-			current->value = ft_add_val_in(current->value, env, shell);
-			past = current;
-			current = next;
-		}
-		else if (current->type == VARIABLE || current->type == EXPORT_VAL)
-		{
-			current->value = ft_add_val_in(current->value, env, shell);
-			if (ft_isspaces_inside(current->value))
-				current = ft_add_token(current);
-			past = current;
-			current = next;
-		}
-		else
-		{
-			past = current;
-			current = next;
-		}
+		norm.next = current->next;
+		current = ft_check_val_norm(&norm, current, env, shell, token);
 	}
 }
-
 int	valide_requirements(void)
 {
 	char	*res;
 
-	if (!isatty(STDIN_FILENO))
+	if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
 	{
 		ft_putstr_fd("minishell: minishell run only in a tty\n", 2);
 		return (1);
@@ -424,75 +448,166 @@ int	valide_requirements(void)
 
 void	prepare_requirements(t_shell *shell, char **env)
 {
+	char	*df_path;
+
+	df_path = "/usr/gnu/bin:/usr/local/bin:/bin:/usr/bin:.";
 	tcgetattr(STDIN_FILENO, &shell->term);
 	get_shell(shell, 1);
-	extract_env(shell, env);
+	extract_env(shell, env, df_path);
 	set_last_status(&shell->last_status, 0);
 	rl_catch_signals = 0;
 }
 
-int main(int ac, char **av, char **env)
+// int main(int ac, char **av, char **env)
+// {
+// 	t_token **head_lex;
+// 	t_main	**head;
+// 	char	*str;
+
+// 	(void)ac;
+// 	(void)av;
+// 	if (valide_requirements())
+// 		return (1);
+// 	t_shell *shell = malloc(sizeof(t_shell));
+// 	ft_memset(shell, 0, sizeof(t_shell));
+// 	prepare_requirements(shell, env);
+// 	while (1)
+// 	{
+// 		signal(SIGINT, cntrlc);
+// 		signal(SIGQUIT, SIG_IGN);
+// 		shell->is_pipe = 0;
+// 		head_lex = (t_token **)ft_malloc(sizeof(t_token *));
+// 		*head_lex = NULL;
+// 		head = (t_main **)ft_malloc(sizeof(t_main *));
+// 		*head = NULL;
+// 		str = readline("minishel>$ ");
+// 		if (!str)
+// 		{
+// 			ft_putstr_fd("exit\n", 1);
+// 			my_exit(shell->last_status);
+// 		}
+// 		if (!str[0])
+// 		{
+// 			free(str);
+// 			continue;
+// 		}
+// 		ft_free(str, 0);
+// 		add_history(str);
+// 		lexer(str, head_lex);
+// 		if (ft_check_syntax_error(*head_lex) == 0)
+// 		{
+// 			shell->last_status = 258;
+// 			ft_exit_syntax_error();
+// 		}
+// 		else if (*head_lex)
+// 		{
+// 			signal(SIGINT, SIG_IGN);
+// 			ft_check_val(head_lex, shell->env, shell);
+// 			ft_check_str_variable(head_lex);
+// 			ft_check_str(head_lex);
+// 			ft_make_org_var(head_lex);
+// 			ft_parsing(head_lex, head, shell->env, shell);
+// 			if (!*head)
+// 			{
+// 				my_clean();
+// 				continue ;
+// 			}
+// 			if (!(*head)->next)
+// 				shell->last_status =  run_single_cmd(*head, shell);
+// 			else
+// 			{
+// 				shell->is_pipe = 1;
+// 				shell->last_status =  run_multi_cmd(*head, shell);
+// 			}
+// 			tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
+// 			my_clean();
+// 		}
+// 	}
+// }
+
+void	execution_logique(t_main **head, t_shell *shell)
 {
-	t_token **head_lex;
+	if (!(*head)->next)
+		shell->last_status = run_single_cmd(*head, shell);
+	else
+	{
+		shell->is_pipe = 1;
+		shell->last_status =  run_multi_cmd(*head, shell);
+	}
+	tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
+	my_clean();
+}
+
+int	parse_logique(t_token **head_lex, t_main **head, t_shell *shell)
+{
+	if (ft_check_syntax_error(*head_lex) == 0)
+	{
+		shell->last_status = 258;
+		ft_exit_syntax_error();
+	}
+	else if (*head_lex)
+	{
+		signal(SIGINT, SIG_IGN);
+		ft_check_val(head_lex, shell->env, shell);
+		ft_check_str_variable(head_lex);
+		ft_check_str(head_lex);
+		ft_make_org_var(head_lex);
+		ft_parsing(head_lex, head, shell->env, shell);
+		if (!*head)
+		{
+			my_clean();
+			return (1);
+		}
+		execution_logique(head, shell);
+	}
+	return (0);
+}
+
+int	main_logique(t_shell *shell, t_token **head_lex, t_main **head, char *str)
+{
+	head_lex = (t_token **)ft_malloc(sizeof(t_token *));
+	*head_lex = NULL;
+	head = (t_main **)ft_malloc(sizeof(t_main *));
+	*head = NULL;
+	str = readline("minishel>$ ");
+	if (!str)
+	{
+		ft_putstr_fd("exit\n", 2);
+		my_exit(shell->last_status);
+	}
+	if (!str[0])
+	{
+		free(str);
+		return (1);
+	}
+	ft_free(str, 0);
+	add_history(str);
+	lexer(str, head_lex);
+	if (parse_logique(head_lex, head, shell))
+		return (1);
+	return (0);
+}
+
+int	main(int ac, char **av, char **env)
+{
+	t_token	**head_lex;
 	t_main	**head;
 	char	*str;
+	t_shell	*shell;
 
 	(void)ac;
 	(void)av;
 	if (valide_requirements())
 		return (1);
-	t_shell *shell = malloc(sizeof(t_shell));
+	shell = malloc(sizeof(t_shell));
 	ft_memset(shell, 0, sizeof(t_shell));
 	prepare_requirements(shell, env);
-	while (1)
+	while(1)
 	{
 		signal(SIGINT, cntrlc);
 		signal(SIGQUIT, SIG_IGN);
 		shell->is_pipe = 0;
-		head_lex = (t_token **)ft_malloc(sizeof(t_token *));
-		*head_lex = NULL;
-		head = (t_main **)ft_malloc(sizeof(t_main *));
-		*head = NULL;
-		str = readline("minishel>$ ");
-		if (!str)
-		{
-			ft_putstr_fd("exit\n", 1);
-			my_exit(shell->last_status);
-		}
-		ft_free(str, 0);
-		add_history(str);
-		if (!str[0])
-			continue;
-		lexer(str, head_lex);
-		if (ft_check_syntax_error(*head_lex) == 0)
-		{
-			shell->last_status = 258;
-			ft_exit_syntax_error();
-		}
-		else if (*head_lex)
-		{
-			ft_check_val(head_lex, shell->env, shell);
-			ft_check_str(head_lex);
-			ft_make_org_var(head_lex);
-			ft_check_str_variable(head_lex);
-			signal(SIGINT, SIG_IGN);
-			ft_parsing(head_lex, head, shell->env, shell);
-			signal(SIGINT, cntrlc);
-			// print_main_debug(*head);//remove me next
-			if (!*head)
-			{
-				my_clean();
-				continue ;
-			}
-			if (!(*head)->next)
-				shell->last_status =  run_single_cmd(*head, shell);
-			else
-			{
-				shell->is_pipe = 1;
-				shell->last_status =  run_multi_cmd(*head, shell);
-			}
-			tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
-			my_clean();
-		}
+		if (main_logique(shell, head_lex, head, str))
+			continue ;
 	}
 }

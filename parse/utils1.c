@@ -19,6 +19,22 @@ size_t	ft_count_str_with_space(char *str)
 	return (count);
 }
 
+void ft_make_str_with_space_norm(char *str, char *new_str, size_t *i, size_t *j)
+{
+	if (str[(*i)] == '>' && str[(*i) + 1] == '>')
+		(new_str[(*j)++] = ' ', new_str[(*j)++] = '>', new_str[(*j)++] = '>', new_str[(*j)++] = ' ', (*i)+=2);
+	else if (str[(*i)] == '<' && str[(*i) + 1] == '<')
+		(new_str[(*j)++] = ' ', new_str[(*j)++] = '<', new_str[(*j)++] = '<', new_str[(*j)++] = ' ', (*i)+=2);
+	else if (str[(*i)] == '>')
+		(new_str[(*j)++] = ' ', new_str[(*j)++] = '>', new_str[(*j)++] = ' ', (*i)++);
+	else if (str[(*i)] == '<')
+		(new_str[(*j)++] = ' ', new_str[(*j)++] = '<', new_str[(*j)++] = ' ', (*i)++);
+	else if (str[(*i)] == '|')
+		(new_str[(*j)++] = ' ', new_str[(*j)++] = '|', new_str[(*j)++] = ' ', (*i)++);
+	else
+		new_str[(*j)++] = str[(*i)++];
+}
+
 char *ft_make_str_with_space(char *str)
 {
 	size_t	len;
@@ -35,30 +51,11 @@ char *ft_make_str_with_space(char *str)
 	while (str[i])
 	{
 		if (!in_quote && (str[i] == '\'' || str[i] == '"'))
-		{
-			in_quote = str[i];
-			new_str[j++] = str[i++];
-		}
+			(in_quote = str[i], new_str[j++] = str[i++]);
 		else if (!in_quote)
-		{
-			if (str[i] == '>' && str[i + 1] == '>')
-				(new_str[j++] = ' ', new_str[j++] = '>', new_str[j++] = '>', new_str[j++] = ' ', i+=2);
-			else if (str[i] == '<' && str[i + 1] == '<')
-				(new_str[j++] = ' ', new_str[j++] = '<', new_str[j++] = '<', new_str[j++] = ' ', i+=2);
-			else if (str[i] == '>')
-				(new_str[j++] = ' ', new_str[j++] = '>', new_str[j++] = ' ', i++);
-			else if (str[i] == '<')
-				(new_str[j++] = ' ', new_str[j++] = '<', new_str[j++] = ' ', i++);
-			else if (str[i] == '|')
-				(new_str[j++] = ' ', new_str[j++] = '|', new_str[j++] = ' ', i++);
-			else
-				new_str[j++] = str[i++];
-		}
+			ft_make_str_with_space_norm(str, new_str, &i, &j);
 		else if (in_quote && str[i] == in_quote)
-		{
-			in_quote = 0;
-			new_str[j++] = str[i++];
-		}
+			(in_quote = 0, new_str[j++] = str[i++]);
 		else if (in_quote)
 			new_str[j++] = str[i++];
 	}
