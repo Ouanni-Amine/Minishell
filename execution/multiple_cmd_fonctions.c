@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:47:59 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/28 20:33:01 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/01 13:29:52 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void	parent_process(t_pipex *pipex, t_main **main, int i)
 		pipex->prev_fd = pipex->pipe_fd[0];
 	}
 	if (i == pipex->nb_cmd - 1)
-		pipex->last_pid = pipex->pid;
+		pipex->last_pid = pipex->pid[i];
 	*main = (*main)->next;
 }
 

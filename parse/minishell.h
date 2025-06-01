@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 12:37:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/30 16:37:54 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/01 13:28:06 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ typedef struct s_pipex
 {
 	int		pipe_fd[2];
 	int		prev_fd;
-	int		pid;
+	int		pid[1392];
 	int		last_pid;
 	int		nb_cmd;
 	int		diff;

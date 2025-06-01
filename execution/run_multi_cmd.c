@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 09:41:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/30 11:06:44 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/01 15:39:58 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,16 @@ void	cleanup_exit_process(int *pipe_fd, int prev_fd, int is_pipe, int code)
 
 void	pipex_cleanup(t_pipex *pipex, int is_pipe, int code, char *message)
 {
-	while (wait(NULL) > 0)
-		;
-	cleanup_exit_process(pipex->pipe_fd, pipex->prev_fd, is_pipe, code);
+	int	i = 0;
+
 	perror(message);
+	while (pipex->pid[i] > 0)
+	{
+		kill(pipex->pid[i], SIGKILL);
+		waitpid(pipex->pid[i], 0, 0);
+		i++;
+	}
+	cleanup_exit_process(pipex->pipe_fd, pipex->prev_fd, is_pipe, code);
 }
 
 int	pipex_logique(t_pipex *pipex, t_main *main, t_shell *shell, int i)
@@ -49,11 +55,11 @@ int	pipex_logique(t_pipex *pipex, t_main *main, t_shell *shell, int i)
 				return (heredoc_cleanup(main),
 					pipex_cleanup(pipex, 0, 0, "minishell: pipe"), 1);
 		}
-		pipex->pid = fork();
-		if (pipex->pid < 0)
+		pipex->pid[i] = fork();
+		if (pipex->pid[i] < 0)
 			return (heredoc_cleanup(main),
 				pipex_cleanup(pipex, pipex->diff, 0, "minishell: fork"), 1);
-		if (pipex->pid == 0)
+		if (pipex->pid[i] == 0)
 			childs_process(pipex, current, shell, i);
 		else
 			parent_process(pipex, &current, i);
@@ -69,6 +75,8 @@ int	run_multi_cmd(t_main *main, t_shell *shell)
 	int		status;
 
 	current = main;
+	ft_memset(&pipex, 0, sizeof(t_pipex));
+	ft_memset(&pipex.pid, -1, sizeof(pipex.pid));
 	status = handle_redir_heredoc(main, shell);
 	if (status)
 		return (heredoc_cleanup(main), status);
