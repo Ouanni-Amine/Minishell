@@ -6,36 +6,24 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 09:54:27 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/30 12:49:42 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/01 20:58:43 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parse/minishell.h"
 
-void	cntrlc(int signal)
+void	sig_handler(int signal)
 {
-	(void)signal;
-	ft_putstr_fd("\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-	set_last_status(NULL, 1);
-}
-
-void	cntrlslash(int signal)
-{
-	(void)signal;
-	ft_putstr_fd("Quit: 3\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-}
-
-void	cntrlc_child(int signal)
-{
-	(void)signal;
-	ft_putstr_fd("\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
+	g_signal = signal;
+	if (waitpid(-1, NULL, WNOHANG) == 0)
+		return ;
+	if (signal == SIGINT)
+	{
+		ft_putstr_fd("\n", 1);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
 }
 
 void	heredoc_cntrlc(int signal)
@@ -45,10 +33,31 @@ void	heredoc_cntrlc(int signal)
 	exit(1);
 }
 
-void	cntrlc_specifique(int signal)
+void	prepare_signals()
 {
-	(void)signal;
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	set_last_status(NULL, 1);
+	g_signal = 0;
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, sig_handler);
+}
+
+void	check_signal()
+{
+	if (g_signal == SIGINT)
+		ft_putendl_fd("", 1);
+	else if(g_signal == SIGQUIT)
+		ft_putendl_fd("Quit: 3", 1);
+}
+
+void	change_handler(int code)
+{
+	if (code)
+	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+	}
+	else
+	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
+	}
 }

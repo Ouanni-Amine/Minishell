@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 12:37:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/01 13:28:06 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/01 21:11:29 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <termios.h>
+
+volatile sig_atomic_t	g_signal;
 
 typedef enum e_token_type
 {
@@ -179,9 +181,10 @@ int			run_builtins(t_main *main, t_shell *shell);
 int			run_single_cmd(t_main *main, t_shell *shell);
 int			parent_exit(t_pipex *pipex, t_main *main);
 void		heredoc_cleanup(t_main *main);
-void		cntrlc(int signal);
-void		cntrlslash(int signal);
-void		cntrlc_child(int signal);
+void		sig_handler(int signal);
+void		prepare_signals(void);
+void		change_handler(int code);
+void		check_signal(void);
 void		heredoc_cntrlc(int signal);
 void		dup_input(t_pipex *pipex);
 void		dup_output(t_pipex *pipex);
@@ -189,9 +192,8 @@ void		childs_process(t_pipex *pipex, t_main *main, t_shell *shell, int i);
 void		parent_process(t_pipex *pipex, t_main **main, int i);
 void		cleanup_exit_process(int *pipe_fd, int prev_fd, int is_pipe,
 				int code);
-void		cntrlc_specifique(int signal);
-void		signal_part(t_main *main);
 char		*command_founder(char **cmd_args, t_env *env);
+int		check_exit(int status);
 
 char		*env_strdup(const char *s1, char c);
 char		**env_split(const char *s, char c);
@@ -212,7 +214,6 @@ void		*ft_memcpy(void *dst, const void *src, size_t n);
 void		ft_putendl_fd(char *s, int fd);
 void		ft_putchar_fd(char c, int fd);
 void		ft_putstr_fd(char *s, int fd);
-void		set_last_status(int *last_status, int code);
 void		*ft_memset(void *b, int c, size_t len);
 char		*ft_strdup(const char *s1, char c);
 char		*ft_strjoin(char const *s1, char const *s2);

@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 09:41:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/01 15:39:58 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/01 21:07:06 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,7 @@ int	pipex_logique(t_pipex *pipex, t_main *main, t_shell *shell, int i)
 	t_main	*current;
 
 	current = main;
-	signal(SIGINT, cntrlc_child);
-	signal(SIGQUIT, cntrlslash);
+	change_handler(0);
 	while (i < pipex->nb_cmd)
 	{
 		pipex->diff = i < pipex->nb_cmd - 1;

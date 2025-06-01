@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:58:51 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/31 15:12:07 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/01 20:35:18 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -454,76 +454,9 @@ void	prepare_requirements(t_shell *shell, char **env)
 	tcgetattr(STDIN_FILENO, &shell->term);
 	get_shell(shell, 1);
 	extract_env(shell, env, df_path);
-	set_last_status(&shell->last_status, 0);
 	rl_catch_signals = 0;
+	prepare_signals();
 }
-
-// int main(int ac, char **av, char **env)
-// {
-// 	t_token **head_lex;
-// 	t_main	**head;
-// 	char	*str;
-
-// 	(void)ac;
-// 	(void)av;
-// 	if (valide_requirements())
-// 		return (1);
-// 	t_shell *shell = malloc(sizeof(t_shell));
-// 	ft_memset(shell, 0, sizeof(t_shell));
-// 	prepare_requirements(shell, env);
-// 	while (1)
-// 	{
-// 		signal(SIGINT, cntrlc);
-// 		signal(SIGQUIT, SIG_IGN);
-// 		shell->is_pipe = 0;
-// 		head_lex = (t_token **)ft_malloc(sizeof(t_token *));
-// 		*head_lex = NULL;
-// 		head = (t_main **)ft_malloc(sizeof(t_main *));
-// 		*head = NULL;
-// 		str = readline("minishel>$ ");
-// 		if (!str)
-// 		{
-// 			ft_putstr_fd("exit\n", 1);
-// 			my_exit(shell->last_status);
-// 		}
-// 		if (!str[0])
-// 		{
-// 			free(str);
-// 			continue;
-// 		}
-// 		ft_free(str, 0);
-// 		add_history(str);
-// 		lexer(str, head_lex);
-// 		if (ft_check_syntax_error(*head_lex) == 0)
-// 		{
-// 			shell->last_status = 258;
-// 			ft_exit_syntax_error();
-// 		}
-// 		else if (*head_lex)
-// 		{
-// 			signal(SIGINT, SIG_IGN);
-// 			ft_check_val(head_lex, shell->env, shell);
-// 			ft_check_str_variable(head_lex);
-// 			ft_check_str(head_lex);
-// 			ft_make_org_var(head_lex);
-// 			ft_parsing(head_lex, head, shell->env, shell);
-// 			if (!*head)
-// 			{
-// 				my_clean();
-// 				continue ;
-// 			}
-// 			if (!(*head)->next)
-// 				shell->last_status =  run_single_cmd(*head, shell);
-// 			else
-// 			{
-// 				shell->is_pipe = 1;
-// 				shell->last_status =  run_multi_cmd(*head, shell);
-// 			}
-// 			tcsetattr(STDIN_FILENO, TCSANOW, &shell->term);
-// 			my_clean();
-// 		}
-// 	}
-// }
 
 void	execution_logique(t_main **head, t_shell *shell)
 {
@@ -570,6 +503,9 @@ int	main_logique(t_shell *shell, t_token **head_lex, t_main **head, char *str)
 	head = (t_main **)ft_malloc(sizeof(t_main *));
 	*head = NULL;
 	str = readline("minishel>$ ");
+	if(g_signal == SIGINT)
+		shell->last_status = 1;
+	g_signal = 0;//this is to not got another new line if the command is builtin since the first check will skiped and u keep in the sgnal 2
 	if (!str)
 	{
 		ft_putstr_fd("exit\n", 2);
@@ -604,8 +540,6 @@ int	main(int ac, char **av, char **env)
 	prepare_requirements(shell, env);
 	while(1)
 	{
-		signal(SIGINT, cntrlc);
-		signal(SIGQUIT, SIG_IGN);
 		shell->is_pipe = 0;
 		if (main_logique(shell, head_lex, head, str))
 			continue ;

@@ -1,23 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   set_last_status.c                                  :+:      :+:    :+:   */
+/*   check_exit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/02 19:26:54 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/06 12:12:40 by aouanni          ###   ########.fr       */
+/*   Created: 2025/06/01 21:08:29 by aouanni           #+#    #+#             */
+/*   Updated: 2025/06/01 21:10:40 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parse/minishell.h"
 
-void	set_last_status(int *last_status, int code)
+int	check_exit(int status)
 {
-	static int	*status;
+	int	stat;
 
-	if (last_status)
-		status = last_status;
-	else
-		*status = code;
+	if (WIFEXITED(status))
+		stat = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		stat = WTERMSIG(status) + 128;
+		g_signal = WTERMSIG(status);
+	}
+	check_signal();
+	return (stat);
 }

@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:48:10 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/30 11:25:14 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/01 21:21:43 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ int	heredoc_inputfd(t_file *current, t_shell *shell)
 	}
 	waitpid(pid, &status, 0);
 	close(fd[0]);
-	signal(SIGINT, cntrlc);
+	signal(SIGINT, sig_handler);
 	if (WIFEXITED(status) && WEXITSTATUS(status) == 1)
 		return (close(fd[1]), -1);
 	return (fd[1]);

@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:47:59 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/01 13:29:52 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/01 21:13:07 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ void	childs_process(t_pipex *pipex, t_main *main, t_shell *shell, int i)
 	char	**new_env;
 	int		status;
 
+	change_handler(1);
 	if (i > 0)
 		dup_input(pipex);
 	if (pipex->diff)
@@ -87,12 +88,7 @@ int	parent_exit(t_pipex *pipex, t_main *main)
 	{
 		wpid = wait(&status);
 		if (wpid == pipex->last_pid)
-		{
-			if (WIFEXITED(status))
-				last_status = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-				last_status = 128 + WTERMSIG(status);
-		}
+			last_status = check_exit(status);
 		i++;
 	}
 	return (heredoc_cleanup(main), last_status);

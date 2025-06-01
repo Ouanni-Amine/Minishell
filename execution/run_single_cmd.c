@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:23:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/30 11:25:53 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/01 21:11:41 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ int	run_single_external(t_main *main, t_shell *shell)
 	char	*path;
 	char	**new_env;
 
+	change_handler(1);
 	if (main->redir && handle_redir(main))
 		exit(1);
 	path = command_founder(main->cmd, shell->env);
@@ -109,16 +110,13 @@ int	run_single_cmd(t_main *main, t_shell *shell)
 		status = handle_builtins(main, shell);
 		return (heredoc_cleanup(main), status);
 	}
-	signal_part(main);
+	change_handler(0);
 	pid = fork();
 	if (pid < 0)
 		return (perror("minishell: fork"), heredoc_cleanup(main), 1);
 	if (pid == 0)
 		run_single_external(main, shell);
 	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		status = WTERMSIG(status) + 128;
+	status = check_exit(status);
 	return (heredoc_cleanup(main), status);
 }

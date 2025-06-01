@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 18:23:52 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/29 20:57:31 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/01 21:16:27 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	ft_free(void *ptr, int flag)
 void	my_clean(void)
 {
 	ft_free(NULL, 1);
+	prepare_signals();
 }
 
 void	my_exit(int status)
