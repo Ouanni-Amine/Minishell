@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 13:00:55 by aouanni           #+#    #+#             */
-/*   Updated: 2025/05/28 11:45:46 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/02 16:17:19 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int	special_case(t_shell *shell, char *arg)
 	error("minishell: cd: error retrieving current directory: getcwd:",
 		" cannot access parent directories: ",
 		strerror(errno), NULL);
-	return (1);
+	return (0);
 }
 
 int	cd_to_dir(t_shell *shell, char *dir, char *oldpwd, int free_oldpwd)
