@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 09:41:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/01 21:07:06 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/02 15:00:37 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,9 @@ void	cleanup_exit_process(int *pipe_fd, int prev_fd, int is_pipe, int code)
 
 void	pipex_cleanup(t_pipex *pipex, int is_pipe, int code, char *message)
 {
-	int	i = 0;
+	int	i;
 
+	i = 0;
 	perror(message);
 	while (pipex->pid[i] > 0)
 	{

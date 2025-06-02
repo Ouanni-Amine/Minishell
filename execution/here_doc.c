@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:48:10 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/01 21:21:43 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/02 14:00:07 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,13 +96,11 @@ int	prepare_heredoc_files(int fd[2])
 	{
 		res = ft_itoa(count);
 		res = ft_strjoin("/tmp/heredoc_", res);
-		if (access(res, F_OK))
+		fd[0] = open(res, O_CREAT | O_EXCL | O_WRONLY, 0644);
+		if (fd[0] != -1)
 			break ;
 		count++;
 	}
-	fd[0] = open(res, O_CREAT | O_WRONLY, 0644);
-	if (fd[0] < 0)
-		return (-1);
 	fd[1] = open(res, O_RDONLY);
 	if (fd[1] < 0)
 		return (close(fd[0]), -1);

@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 09:54:27 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/01 20:58:43 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/02 15:02:01 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,18 +33,18 @@ void	heredoc_cntrlc(int signal)
 	exit(1);
 }
 
-void	prepare_signals()
+void	prepare_signals(void)
 {
 	g_signal = 0;
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, sig_handler);
 }
 
-void	check_signal()
+void	check_signal(int last_status)
 {
 	if (g_signal == SIGINT)
 		ft_putendl_fd("", 1);
-	else if(g_signal == SIGQUIT)
+	else if (g_signal == SIGQUIT && last_status == 131)
 		ft_putendl_fd("Quit: 3", 1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:23:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/01 21:11:41 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/02 13:15:10 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,5 +118,6 @@ int	run_single_cmd(t_main *main, t_shell *shell)
 		run_single_external(main, shell);
 	waitpid(pid, &status, 0);
 	status = check_exit(status);
+	check_signal(status);
 	return (heredoc_cleanup(main), status);
 }

@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:47:59 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/01 21:13:07 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/02 12:03:25 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,11 @@ int	parent_exit(t_pipex *pipex, t_main *main)
 	while (i < pipex->nb_cmd)
 	{
 		wpid = wait(&status);
+		check_exit(status);
 		if (wpid == pipex->last_pid)
 			last_status = check_exit(status);
 		i++;
 	}
+	check_signal(last_status);
 	return (heredoc_cleanup(main), last_status);
 }

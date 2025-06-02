@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 12:37:42 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/01 21:11:29 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/02 12:04:12 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ void		heredoc_cleanup(t_main *main);
 void		sig_handler(int signal);
 void		prepare_signals(void);
 void		change_handler(int code);
-void		check_signal(void);
+void		check_signal(int last_status);
 void		heredoc_cntrlc(int signal);
 void		dup_input(t_pipex *pipex);
 void		dup_output(t_pipex *pipex);
@@ -193,7 +193,7 @@ void		parent_process(t_pipex *pipex, t_main **main, int i);
 void		cleanup_exit_process(int *pipe_fd, int prev_fd, int is_pipe,
 				int code);
 char		*command_founder(char **cmd_args, t_env *env);
-int		check_exit(int status);
+int			check_exit(int status);
 
 char		*env_strdup(const char *s1, char c);
 char		**env_split(const char *s, char c);
