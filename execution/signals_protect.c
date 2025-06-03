@@ -1,28 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check_exit.c                                       :+:      :+:    :+:   */
+/*   signals_protect.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/01 21:08:29 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/03 12:19:50 by aouanni          ###   ########.fr       */
+/*   Created: 2025/06/03 10:29:38 by aouanni           #+#    #+#             */
+/*   Updated: 2025/06/03 10:31:31 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../parse/minishell.h"
 
-int	check_exit(int status)
+void	parse_protection(int signal)
 {
-	int	stat;
-
-	stat = 0;
-	if (WIFEXITED(status))
-		stat = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
+	if (signal == SIGINT)
 	{
-		stat = WTERMSIG(status) + 128;
-		g_signal = WTERMSIG(status);
+		ft_putendl_fd("", 1);
+		g_signal = SIGINT;
 	}
-	return (stat);
 }

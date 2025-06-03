@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:48:10 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/02 14:00:07 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/03 12:19:12 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int	fill_tempfile(int input_fd, char *limiter, int expand, t_shell *shell)
 		if (!ft_strcmp(line, limiter))
 			break ;
 		if (expand)
-			new_line = ft_strjoin(ft_add_val_in(line, shell->env, shell),
+			new_line = ft_strjoin(ft_add_val_in(line, shell),
 					"\n");
 		else
 			new_line = ft_strjoin(line, "\n");

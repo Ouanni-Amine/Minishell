@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils1.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abnaji-e <abnaji-e@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/29 18:28:09 by abnaji-e          #+#    #+#             */
+/*   Updated: 2025/06/03 04:56:47 by abnaji-e         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 size_t	ft_count_str_with_space(char *str)
@@ -9,57 +21,77 @@ size_t	ft_count_str_with_space(char *str)
 	count = 0;
 	while (str[i])
 	{
-		if ((str[i] == '>' && str[i + 1] == '>') || (str[i] == '<' && str[i + 1] == '<'))
-			(count+=4, i+=2);
+		if ((str[i] == '>' && str[i + 1] == '>')
+			|| (str[i] == '<' && str[i + 1] == '<'))
+		{
+			count += 4;
+			i += 2;
+		}
 		else if (str[i] == '>' || str[i] == '<' || str[i] == '|')
-			(count+=3, i++);
+		{
+			count += 3;
+			i++;
+		}
 		else
-			(count++,i++);
+		{
+			count++;
+			i++;
+		}
 	}
 	return (count);
 }
 
-void ft_make_str_with_space_norm(char *str, char *new_str, size_t *i, size_t *j)
+void	ft_make_str_with_space_norm(char *str, char *new_str,
+	size_t *i, size_t *j)
 {
 	if (str[(*i)] == '>' && str[(*i) + 1] == '>')
-		(new_str[(*j)++] = ' ', new_str[(*j)++] = '>', new_str[(*j)++] = '>', new_str[(*j)++] = ' ', (*i)+=2);
+		ft_make_spaces_norm1(new_str, i, j);
 	else if (str[(*i)] == '<' && str[(*i) + 1] == '<')
-		(new_str[(*j)++] = ' ', new_str[(*j)++] = '<', new_str[(*j)++] = '<', new_str[(*j)++] = ' ', (*i)+=2);
+		ft_make_spaces_norm2(new_str, i, j);
 	else if (str[(*i)] == '>')
-		(new_str[(*j)++] = ' ', new_str[(*j)++] = '>', new_str[(*j)++] = ' ', (*i)++);
+		ft_make_spaces_norm3(new_str, i, j);
 	else if (str[(*i)] == '<')
-		(new_str[(*j)++] = ' ', new_str[(*j)++] = '<', new_str[(*j)++] = ' ', (*i)++);
+	{
+		new_str[(*j)++] = ' ';
+		new_str[(*j)++] = '<';
+		new_str[(*j)++] = ' ';
+		(*i)++;
+	}
 	else if (str[(*i)] == '|')
-		(new_str[(*j)++] = ' ', new_str[(*j)++] = '|', new_str[(*j)++] = ' ', (*i)++);
+	{
+		new_str[(*j)++] = ' ';
+		new_str[(*j)++] = '|';
+		new_str[(*j)++] = ' ';
+		(*i)++;
+	}
 	else
 		new_str[(*j)++] = str[(*i)++];
 }
 
-char *ft_make_str_with_space(char *str)
+char	*ft_make_str_with_space(char *str)
 {
 	size_t	len;
-	size_t	i;
-	size_t	j;
+	t_norm	norm;
 	char	*new_str;
 	char	in_quote;
 
 	len = ft_count_str_with_space(str);
-	i = 0;
-	j = 0;
+	norm.i = 0;
+	norm.j = 0;
 	new_str = (char *) ft_malloc(sizeof(char) * (len + 1));
 	in_quote = 0;
-	while (str[i])
+	while (str[norm.i])
 	{
-		if (!in_quote && (str[i] == '\'' || str[i] == '"'))
-			(in_quote = str[i], new_str[j++] = str[i++]);
+		if (!in_quote && (str[norm.i] == '\'' || str[norm.i] == '"'))
+			in_quote = ft_make_with_space_1(new_str, str, in_quote, &norm);
 		else if (!in_quote)
-			ft_make_str_with_space_norm(str, new_str, &i, &j);
-		else if (in_quote && str[i] == in_quote)
-			(in_quote = 0, new_str[j++] = str[i++]);
+			ft_make_str_with_space_norm(str, new_str, &norm.i, &norm.j);
+		else if (in_quote && str[norm.i] == in_quote)
+			in_quote = ft_make_with_space_2(new_str, str, in_quote, &norm);
 		else if (in_quote)
-			new_str[j++] = str[i++];
+			new_str[norm.j++] = str[norm.i++];
 	}
-	new_str[j] = '\0';
+	new_str[norm.j] = '\0';
 	return (new_str);
 }
 
