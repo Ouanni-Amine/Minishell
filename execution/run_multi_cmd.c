@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 09:41:12 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/02 15:00:37 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/17 16:44:21 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	cleanup_exit_process(int *pipe_fd, int prev_fd, int is_pipe, int code)
 		close(pipe_fd[0]);
 	}
 	if (code)
-		exit(1);
+		my_exit(1);
 }
 
 void	pipex_cleanup(t_pipex *pipex, int is_pipe, int code, char *message)

@@ -6,7 +6,7 @@
 /*   By: abnaji-e <abnaji-e@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:01:57 by abnaji-e          #+#    #+#             */
-/*   Updated: 2025/06/03 01:40:02 by abnaji-e         ###   ########.fr       */
+/*   Updated: 2025/06/03 15:34:08 by abnaji-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,6 @@ void	ft_add_val(char *str, t_token **head_lex)
 	while (main_str[i])
 	{
 		new_node = ft_malloc(sizeof(t_token));
-		if (!new_node)
-			break ;
 		new_node->value = ft_strdup(main_str[i], '\0');
 		new_node->next = NULL;
 		if (i == 0)

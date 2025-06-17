@@ -6,7 +6,7 @@
 /*   By: abnaji-e <abnaji-e@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:35:04 by abnaji-e          #+#    #+#             */
-/*   Updated: 2025/06/03 06:57:46 by abnaji-e         ###   ########.fr       */
+/*   Updated: 2025/06/03 17:41:16 by abnaji-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ t_token	*ft_check_val_norm(t_norm *norm, t_token *ct,
 	if (norm->past != NULL && norm->past->type == 5 && ct->type == 6)
 		ft_set_norm1(norm, &ct);
 	else if (norm->past != NULL
-		&& (norm->past->type == 2 || norm->past->type == 3) && ct->type == 6)
+		&& (norm->past->type >= 2 && norm->past->type <= 4) && ct->type == 6)
 		ft_set_norm1(norm, &ct);
 	else if (norm->past && norm->past->type == 8 && ct->type == 6)
 		ct = ft_check_val_norm_max(norm, ct, shell);

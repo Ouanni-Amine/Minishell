@@ -6,7 +6,7 @@
 /*   By: abnaji-e <abnaji-e@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:24:16 by abnaji-e          #+#    #+#             */
-/*   Updated: 2025/06/03 06:10:10 by abnaji-e         ###   ########.fr       */
+/*   Updated: 2025/06/03 16:41:01 by abnaji-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,11 @@ void	ft_add_val_len_norm(char *v, t_shell *shell, t_norm *n, char *local)
 			&& v[n->i + 1] == '?' && ft_check_variable_max(v, (*n).i))
 		{
 			ft_code_norm1(local, shell, n);
-			continue ;
 		}
 		else if (ft_code_norm3(n, v))
 		{
 			local = "";
 			n->i += 2;
-			continue ;
 		}
 		else if (v[n->i] == '$' && v[n->i + 1]
 			&& ft_symbols_max(v[n->i + 1]) && ft_check_variable_max(v, n->i))

@@ -100,8 +100,6 @@ char	*ft_get_the_true_str2(char *s)
 	n.i = 0;
 	n.k = 0;
 	new_str = ft_malloc(ft_true_str3_len(s) + 1);
-	if (!new_str)
-		return (NULL);
 	while (s[n.i])
 	{
 		if (s[n.i] && s[n.i + 1] && s[n.i] == '$' && s[n.i + 1] == '$')
@@ -129,8 +127,6 @@ char	*ft_get_the_true_str3(char *str)
 	new_str = ft_malloc(ft_true_str3_len(str) + 1);
 	n.i = 0;
 	n.k = 0;
-	if (!new_str)
-		return (NULL);
 	while (str[n.i])
 	{
 		if (str[n.i] && str[n.i + 1] && str[n.i] == '$' && str[n.i + 1] == '$')

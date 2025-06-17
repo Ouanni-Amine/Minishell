@@ -6,7 +6,7 @@
 /*   By: abnaji-e <abnaji-e@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:58:15 by abnaji-e          #+#    #+#             */
-/*   Updated: 2025/06/03 02:27:27 by abnaji-e         ###   ########.fr       */
+/*   Updated: 2025/06/03 15:32:56 by abnaji-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,6 @@ static char	*word_dup(const char *s, int start, int end)
 
 	word = ft_malloc(end - start + 1);
 	i = 0;
-	if (!word)
-		return (NULL);
 	while (start < end)
 		word[i++] = s[start++];
 	word[i] = '\0';
@@ -107,8 +105,6 @@ char	**ft_split(char const *s, char sep)
 	quote_type = 0;
 	nbr_words = count_words2(s, sep);
 	result = ft_malloc(sizeof(char *) * (nbr_words + 1));
-	if (!result)
-		return (NULL);
 	while (s[norm.i] && norm.j < nbr_words)
 	{
 		while (s[norm.i] == sep && !in_quote)

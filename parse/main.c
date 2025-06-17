@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:58:51 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/03 13:36:05 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/17 15:33:57 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int	parse_logique(t_token **head_lex, t_main **head, t_shell *shell)
 		if (!*head)
 		{
 			my_clean();
+			shell->last_status = 0;
 			return (1);
 		}
 		execution_logique(head, shell);

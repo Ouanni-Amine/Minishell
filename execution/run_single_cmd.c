@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 13:23:30 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/02 13:15:10 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/17 16:38:55 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int	handle_builtins(t_main *main, t_shell *shell)
 	return (status);
 }
 
-int	run_single_external(t_main *main, t_shell *shell)
+void	run_single_external(t_main *main, t_shell *shell)
 {
 	char	*path;
 	char	**new_env;
@@ -94,7 +94,7 @@ int	run_single_external(t_main *main, t_shell *shell)
 	new_env = env_convertor(shell->env);
 	execve(path, main->cmd, new_env);
 	perror("minishell: execve");
-	exit(1);
+	my_exit(1);
 }
 
 int	run_single_cmd(t_main *main, t_shell *shell)

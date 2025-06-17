@@ -6,7 +6,7 @@
 /*   By: abnaji-e <abnaji-e@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 17:45:15 by abnaji-e          #+#    #+#             */
-/*   Updated: 2025/06/03 07:02:11 by abnaji-e         ###   ########.fr       */
+/*   Updated: 2025/06/03 17:40:38 by abnaji-e         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_file	*create_file_node(t_token *tk, t_shell *shell)
 		new_file->expand = 1;
 	else
 		new_file->expand = 0;
-	if ((tk->type == 2 || tk->type == 3) && tk->next->value
+	if ((tk->type >= 2 && tk->type <= 4) && tk->next->value
 		&& ft_check_content(tk->next->value, tk->next->type, shell))
 		new_file->ambiguous = 1;
 	else
@@ -78,7 +78,7 @@ size_t	ft_count_word_token(t_token *current)
 	while (current && current->type != PIPE)
 	{
 		if (current->type == WORD || current->type == VARIABLE
-			|| current->type == EXPORT_VAL || current->type == JUST_EXPORT)
+			|| current->type == 7 || current->type == JUST_EXPORT)
 			count++;
 		else if (current->type >= REDIR_IN && current->type <= HEREDOC)
 			current = current->next;

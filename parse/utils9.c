@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils9.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abnaji-e <abnaji-e@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 18:12:55 by abnaji-e          #+#    #+#             */
-/*   Updated: 2025/06/03 06:45:00 by abnaji-e         ###   ########.fr       */
+/*   Updated: 2025/06/17 14:42:45 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	ft_check_if_is_built(char *value)
 
 void	ft_exit_syntax_error(void)
 {
-	error("syntax error", 0, 0, 0);
+	ft_putendl_fd("minishell: syntax error", 2);
 	my_clean();
 }
 

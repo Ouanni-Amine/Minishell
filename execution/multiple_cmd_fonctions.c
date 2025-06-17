@@ -6,7 +6,7 @@
 /*   By: aouanni <aouanni@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 15:47:59 by aouanni           #+#    #+#             */
-/*   Updated: 2025/06/02 12:03:25 by aouanni          ###   ########.fr       */
+/*   Updated: 2025/06/17 16:37:26 by aouanni          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,14 @@ void	childs_process(t_pipex *pipex, t_main *main, t_shell *shell, int i)
 		new_env = env_convertor(shell->env);
 		execve(path, main->cmd, new_env);
 		perror("minishell: execve");
-		exit(1);
+		my_exit(1);
 	}
 	else if (main->is_builtin && main->cmd[0])
 	{
 		status = run_builtins(main, shell);
-		exit(status);
+		my_exit(status);
 	}
-	exit(0);
+	my_exit(0);
 }
 
 void	parent_process(t_pipex *pipex, t_main **main, int i)
